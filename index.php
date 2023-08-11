@@ -1,5 +1,7 @@
 <?php
-
+header("Access-Control-Allow-Origin: http://localhost:3000"); // แก้ไข URL ตามโดเมนของแอป React ของคุณ
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
         ini_set('display_errors', 1);
         ini_set('memory_limit', '256M'); 
 
