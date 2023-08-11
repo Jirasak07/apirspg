@@ -4,7 +4,7 @@
 
         header("Cache-Control: no-cache, must-revalidate"); //[PHP Clear Cache] เครียด้วย php
         header("Last-Modified: " . gmdate ("D, d M Y H:i:s") . " GMT"); //[PHP Clear Cache] เครียด้วย php
-        // header("Access-Control-Allow-Origin: localhost:3000 ");
+        header("Access-Control-Allow-Origin: localhost:3000 ");
 
         require 'libs/Bootstrap.php';
     	require 'libs/Controller.php';
