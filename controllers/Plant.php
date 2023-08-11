@@ -22,6 +22,9 @@
         function SelectProvince(){
             $this->model->SelectProvince();
         }
+        function SelectAmphur(){
+            $this->model->SelectAmphur();
+        }
 
 	}
 ?>
