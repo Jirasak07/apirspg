@@ -19,6 +19,9 @@
         function getUser(){
             $this->model->getUser();
         }
+        function SelectProvince(){
+            $this->model->SelectProvince();
+        }
 
 	}
 ?>
