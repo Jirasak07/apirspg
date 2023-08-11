@@ -35,7 +35,7 @@
             $json = json_decode(file_get_contents("php://input"));
             $amphur = $json->amphur;
             $sql = $this->db->prepare("
-            SELECT DISTRICT_ID,DISTRICT_NAME,(SELECT POST_CODE FROM tb_amphur_postcode WHERE AMPHUR_ID = A.AMPHUR_ID ) AS ZIPCODE FROM tb_district AS A  WHERE PROVINCE_ID = '$amphur'
+            SELECT DISTRICT_ID,DISTRICT_NAME AS ZIPCODE FROM tb_district AS A  WHERE AMPHUR_ID = '$amphur'
             ");
             $sql->execute(array());
             $data = $sql->fetchAll(PDO::FETCH_ASSOC);
