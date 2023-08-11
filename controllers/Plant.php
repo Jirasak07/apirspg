@@ -25,6 +25,9 @@
         function SelectAmphur(){
             $this->model->SelectAmphur();
         }
+        function SelectTambon(){
+            $this->model->SelectTambon();
+        }
 
 	}
 ?>
