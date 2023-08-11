@@ -16,7 +16,7 @@
         }	
         function SelectProvince(){
             $sql = $this->db->prepare("
-            SELECT PROVINCE_ID,PROVINCE_NAME FROM tb_province
+            SELECT PROVINCE_ID AS value,PROVINCE_NAME AS label FROM tb_province
             ");
             $sql->execute(array());
             $data = $sql->fetchAll(PDO::FETCH_ASSOC);
