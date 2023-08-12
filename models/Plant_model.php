@@ -162,9 +162,9 @@
             // $file_size =$_FILES['file']['size'];
             // $file_tmp =$_FILES['file']['tmp_name'];
             $file_type=$_FILES['file']['type'];   
-            $filename = "public/uploaddocument/";
+            $filename = "public/uploadimg/";
             if (!file_exists($filename)) {
-                    mkdir("public/uploaddocument/", 0777);
+                    mkdir("public/uploadimg/", 0777);
             } 
             if($file_type === "application/pdf" || $file_type === "image/png" || $file_type === "image/jpg" || $file_type === "image/jpeg"){
                 $files_upload = basename($_FILES["file"]["name"]);
