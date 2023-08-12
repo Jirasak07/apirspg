@@ -28,6 +28,9 @@
         function SelectTambon(){
             $this->model->SelectTambon();
         }
+        function ZipCode(){
+            $this->model->ZipCode();
+        }
 
 	}
 ?>

@@ -16,7 +16,7 @@
         }	
         function SelectProvince(){
             $sql = $this->db->prepare("
-            SELECT PROVINCE_ID AS value,PROVINCE_NAME AS label FROM tb_province
+            SELECT PROVINCE_ID AS value,PROVINCE_NAME AS label FROM tb_province WHERE PROVINCE_ID = '49'
             ");
             $sql->execute(array());
             $data = $sql->fetchAll(PDO::FETCH_ASSOC);
@@ -38,6 +38,16 @@
             $amphur = $json->amphur;
             $sql = $this->db->prepare("
             SELECT DISTRICT_ID,DISTRICT_NAME ,(SELECT POST_CODE FROM tb_amphur_postcode WHERE AMPHUR_id = '$amphur') AS ZIPCODE FROM tb_district AS A  WHERE AMPHUR_ID = '$amphur'
+            ");
+            $sql->execute(array());
+            $data = $sql->fetchAll(PDO::FETCH_ASSOC);
+            echo json_encode($data,JSON_PRETTY_PRINT);
+        }
+        function ZipCode(){
+            $json = json_decode(file_get_contents("php://input"));
+            $amphur = $json->amphur;
+            $sql = $this->db->prepare("
+            SELECT POST_CODE AS ZIPCODE FROM tb_amphur_postcode WHERE AMPHUR_id = '$amphur'
             ");
             $sql->execute(array());
             $data = $sql->fetchAll(PDO::FETCH_ASSOC);
