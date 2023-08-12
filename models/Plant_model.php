@@ -143,7 +143,17 @@
              
             //  $data  = $sqladd->fetchAll(PDO::FETCH_ASSOC);
              if($sqladd->execute(array())){
-                echo json_encode('success');
+                $array = [
+                    "mes"=>"success",
+                    "val"=>$pid
+                ];
+                echo json_encode($array,JSON_PRETTY_PRINT);
+             }else{
+                $array = [
+                    "mes"=>"error",
+                    "val"=>$pid
+                ];
+                echo json_encode($array,JSON_PRETTY_PRINT);
              }
         }
 		
