@@ -175,55 +175,35 @@
                 $imageFileType = strtolower(pathinfo($files_upload,PATHINFO_EXTENSION));
                 $delete = $filename."/$name.".$imageFileType;
                 if(file_exists($delete)){
-                      unlink($delete); 
-                      if(move_uploaded_file($_FILES["file"]["tmp_name"], $filename."$name.".$imageFileType)){
-                        $img = $filename."$name.".$imageFileType;
-                        $sqlmaxid = $this->db->prepare("
-                        SELECT COUNT(*) total FROM tb_plant_img
-                        ");
-                        $sqlmaxid->execute(array());
-                        $total = $sqlmaxid->fetchAll(PDO::FETCH_ASSOC);
-                        $total = $total[0]['total'];
-                        if(intval($total) <= 0){
-                            $mid = 1;
-                        }else{
-                            $mid = intval($total) +1;
-                        }
-                        $sqlimg = $this->db->prepare("
-                        INSERT INTO tb_plant_img VALUES($mid,'$img','$plantid','$user_id',$createdAt)
-                        ");
-                        
-                        if($sqlimg->execute(array())){
-                            echo json_encode("success",JSON_PRETTY_PRINT);
-                        }
-                   }
-                }else if(!file_exists($delete)) {
-                    if(move_uploaded_file($_FILES["file"]["tmp_name"], $filename."$name.".$imageFileType)){
-                        // echo  json_encode($filename."$name.".$imageFileType, JSON_PRETTY_PRINT);
-                        $img = $filename."$name.".$imageFileType;
-                        $sqlmaxid = $this->db->prepare("
-                        SELECT COUNT(*) total FROM tb_plant_img
-                        ");
-                        $sqlmaxid->execute(array());
-                        $total = $sqlmaxid->fetchAll(PDO::FETCH_ASSOC);
-                        $total = $total[0]['total'];
-                        if(intval($total) <= 0){
-                            $mid = 1;
-                        }else{
-                            $mid = intval($total) +1;
-                        }
-                        $sqlimg = $this->db->prepare("
-                        INSERT INTO tb_plant_img VALUES($mid,'$img','$plantid','$user_id',$createdAt)
-                        ");
-                        
-                        if($sqlimg->execute(array())){
-                            echo json_encode("success",JSON_PRETTY_PRINT);
-                        }
-                   }
-                }
-                }else {
-                  echo   json_encode("error", JSON_PRETTY_PRINT);
-                }
-                    }    
-}
+                     unlink($delete); 
+                } 
+                if(move_uploaded_file($_FILES["file"]["tmp_name"], $filename."$name.".$imageFileType)){
+                    $img = $filename."$name.".$imageFileType;
+                    $sqlmaxid = $this->db->prepare("
+                    SELECT COUNT(*) total FROM tb_plant_img
+                    ");
+                    $sqlmaxid->execute(array());
+                    $total = $sqlmaxid->fetchAll(PDO::FETCH_ASSOC);
+                    $total = $total[0]['total'];
+                    if(intval($total) <= 0){
+                        $mid = 1;
+                    }else{
+                        $mid = intval($total) +1;
+                    }
+                    $sqlimg = $this->db->prepare("
+                    INSERT INTO tb_plant_img VALUES($mid,'$img','$plantid','$user_id',$createdAt)
+                    ");
+                    
+                    if($sqlimg->execute(array())){
+                        echo json_encode("success",JSON_PRETTY_PRINT);
+                    }else{
+                        echo json_encode("error",JSON_PRETTY_PRINT);
+                    }
+            }
+        }else{
+            echo json_encode("error file type",JSON_PRETTY_PRINT);
+        }
+    }   
+}            
+                     
 ?>
