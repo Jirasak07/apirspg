@@ -91,7 +91,13 @@
             $sql->execute(array());
             $total = $sql->fetchAll(PDO::FETCH_ASSOC);
             $total = $total[0]['total'];
-            echo json_encode($total,JSON_PRETTY_PRINT);
+            $pid = 0;
+            if(intval($total) <= 0 ){
+                $pid = 1;
+            }else{
+                $pid = intval($total) +1;
+            }
+            echo json_encode($pid,JSON_PRETTY_PRINT);
         }
 		
 	}
