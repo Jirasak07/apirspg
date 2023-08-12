@@ -158,26 +158,49 @@
         }
         function uploadImage(){
             $name = $_REQUEST['name'];
+            $plantid = $_REQUEST['plant_id'];
+            $user_id = $_REQUEST['user_id'];
             // $file_name = $_FILES['file']['name'];
             // $file_size =$_FILES['file']['size'];
             // $file_tmp =$_FILES['file']['tmp_name'];
             $file_type=$_FILES['file']['type'];   
+            $currentTime = new DateTime();
+            $createdAt = $currentTime->format('Y-m-d H:i:s');
             $filename = "public/uploadimg/";
             if (!file_exists($filename)) {
                     mkdir("public/uploadimg/", 0777);
             } 
-            if($file_type === "application/pdf" || $file_type === "image/png" || $file_type === "image/jpg" || $file_type === "image/jpeg"){
+            if( $file_type === "image/png" || $file_type === "image/jpg" || $file_type === "image/jpeg"){
                 $files_upload = basename($_FILES["file"]["name"]);
                 $imageFileType = strtolower(pathinfo($files_upload,PATHINFO_EXTENSION));
                 $delete = $filename."/$name.".$imageFileType;
                 if(file_exists($delete)){
                       unlink($delete); 
-                      if(move_uploaded_file($_FILES["file"]["tmp_name"], $filename."/$name.".$imageFileType)){
-                        echo  json_encode($filename."/$name.".$imageFileType, JSON_PRETTY_PRINT);
+                      if(move_uploaded_file($_FILES["file"]["tmp_name"], $filename."$name.".$imageFileType)){
+                        echo  json_encode($filename."$name.".$imageFileType, JSON_PRETTY_PRINT);
                    }
                 }else if(!file_exists($delete)) {
-                    if(move_uploaded_file($_FILES["file"]["tmp_name"], $filename."/$name.".$imageFileType)){
-                        echo  json_encode($filename."/$name.".$imageFileType, JSON_PRETTY_PRINT);
+                    if(move_uploaded_file($_FILES["file"]["tmp_name"], $filename."$name.".$imageFileType)){
+                        // echo  json_encode($filename."$name.".$imageFileType, JSON_PRETTY_PRINT);
+                        $img = $filename."$name.".$imageFileType;
+                        $sqlmaxid = $this->db->prepare("
+                        SELECT COUNT(*) total FROM tb_plant_img
+                        ");
+                        $sqlmaxid->execute(array());
+                        $total = $sqlmaxid->fetchAll(PDO::FETCH_ASSOC);
+                        $total = $total[0]['total'];
+                        if(intval($total) <= 0){
+                            $mid = 1;
+                        }else{
+                            $mid = intval($total) +1;
+                        }
+                        $sqlimg = $this->db->prepare("
+                        INSERT INTO tb_plant_img VALUES($mid,'$img','$plantid','$user_id',$createdAt)
+                        ");
+                        
+                        if($sqlimg->execute(array())){
+                            echo json_encode("success",JSON_PRETTY_PRINT);
+                        }
                    }
                 }
                 }else {
