@@ -168,12 +168,14 @@
                     if (file_exists($targetPath)) {
                         unlink($targetPath);
                     }
-            
-                    if (move_uploaded_file( $filename, $targetPath)) {
-                        echo json_encode(['message' => $filename]);
-                    } else {
-                        echo json_encode(['error' => 'Upload failed']);
-                    }
+        echo ($filename);
+        echo ($targetPath);
+        echo ($filename);
+                    // if (move_uploaded_file( $filename, $targetPath)) {
+                    //     echo json_encode(['message' => $filename]);
+                    // } else {
+                    //     echo json_encode(['error' => 'Upload failed']);
+                    // }
                 } else {
                     echo json_encode(['error' => 'No file uploaded']);
                 }
