@@ -156,6 +156,29 @@
                 echo json_encode($array,JSON_PRETTY_PRINT);
              }
         }
-		
+        function uploadImage(){
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                if (isset($_FILES['file'])) {
+                    $uploadDir = 'public/uploadimg/';
+                    $filename = basename($_FILES['file']['name']);
+                    $name = $_POST['name'];  // รับค่าชื่อไฟล์ใหม่จากตัวแปร $_POST['name']
+                    $targetPath = $uploadDir . $name;
+            
+                    // Check if the file exists and delete it
+                    if (file_exists($targetPath)) {
+                        unlink($targetPath);
+                    }
+            
+                    if (move_uploaded_file($_FILES['file']['tmp_name'], $targetPath)) {
+                        echo json_encode(['message' => 'Upload successful']);
+                    } else {
+                        echo json_encode(['error' => 'Upload failed']);
+                    }
+                } else {
+                    echo json_encode(['error' => 'No file uploaded']);
+                }
+            } else {
+                echo json_encode(['error' => 'Invalid request']);
+            }
 	}
 ?>

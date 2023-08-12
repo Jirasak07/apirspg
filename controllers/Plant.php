@@ -34,6 +34,9 @@
         function AddPlant(){
             $this->model->AddPlant();
         }
+        function uploadImage(){
+            $this->model->uploadImage();
+        }
 
 	}
 ?>
