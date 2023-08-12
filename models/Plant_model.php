@@ -57,7 +57,7 @@
             $json = json_decode(file_get_contents("php://input"));
             $plant_id = $json->plant_code;
             $plant_name = $json->plant_name;
-            $area = $json->plant_area;
+            $area = $json->area;
             $locate_x = $json->x;
             $locate_y = $json->y;
             $distinctive = $json->distinctive;
@@ -114,7 +114,7 @@
                 age,
                 girth,
                 height,
-                status,
+                statuss,
                 benefit_foot,
                 benefit_medicine_human,
                 benefit_medicine_animal,
