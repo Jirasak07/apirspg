@@ -191,7 +191,7 @@
                         $mid = intval($total) +1;
                     }
                     $sqlimg = $this->db->prepare("
-                    INSERT INTO tb_plant_img VALUES($mid,'$img','$plantid','$user_id',$createdAt)
+                    INSERT INTO tb_plant_img VALUES($mid,'$img','$plantid','$user_id','$createdAt')
                     ");
                     
                     if($sqlimg->execute(array())){
