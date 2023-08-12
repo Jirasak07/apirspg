@@ -169,8 +169,8 @@
                         unlink($targetPath);
                     }
             
-                    if (move_uploaded_file($_FILES['file']['tmp_name'], $targetPath)) {
-                        echo json_encode(['message' => $_FILES['file']['tmp_name']]);
+                    if (move_uploaded_file( $filename, $targetPath)) {
+                        echo json_encode(['message' => $filename]);
                     } else {
                         echo json_encode(['error' => 'Upload failed']);
                     }
