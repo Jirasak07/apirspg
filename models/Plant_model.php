@@ -55,36 +55,36 @@
         }
         function AddPlant(){
             $json = json_decode(file_get_contents("php://input"));
-            // $plant_id = $json->plant_code;
-            // $plant_name = $json->plant_name;
-            // $area = $json->plant_area;
-            // $locate_x = $json->x;
-            // $locate_y = $json->y;
-            // $distinctive = $json->distinctive;
-            // $qty = $json->qty;
-            // $girth = $json->radius;
-            // $status = $json->status;
-            // $tambol = $json->tambon_id;
-            // $zipcode = $json->zipcode;
-            // $province = '49';
-            // $plant_character = $json->plant_character;
-            // $amphure = $json->amphur_id;
-            // $benefit_appliances =$json->benefit_appliances;
-            // $benefit_foot = $json->benefit_foot;
-            // $benefit_medicine_animal = $json->benefit_medicine_animal;
-            // $benefit_medicine_human = $json->benefit_medicine_human;
-            // $benefit_pesticide = $json->benefit_pesticide;
-            // $height = $json->height;
-            // $name_adder = $json->name_adder;
-            // $other=$json->other;
-            // $age_adder = $json->age_adder;
-            // $address_adder =$json->address_adder;
-            // $about_tradition = $json->about_tradition;
-            // $about_religion = $json->about_religion;
-            // $age = $json->age;
-            // $user_id = $json->user_id;
-            // $currentTime = new DateTime();
-            // $createdAt = $currentTime->format('Y-m-d H:i:s');
+            $plant_id = $json->plant_code;
+            $plant_name = $json->plant_name;
+            $area = $json->plant_area;
+            $locate_x = $json->x;
+            $locate_y = $json->y;
+            $distinctive = $json->distinctive;
+            $qty = $json->qty;
+            $girth = $json->radius;
+            $status = $json->status;
+            $tambol = $json->tambon_id;
+            $zipcode = $json->zipcode;
+            $province = '49';
+            $plant_character = $json->plant_character;
+            $amphure = $json->amphur_id;
+            $benefit_appliances =$json->benefit_appliances;
+            $benefit_foot = $json->benefit_foot;
+            $benefit_medicine_animal = $json->benefit_medicine_animal;
+            $benefit_medicine_human = $json->benefit_medicine_human;
+            $benefit_pesticide = $json->benefit_pesticide;
+            $height = $json->height;
+            $name_adder = $json->name_adder;
+            $other=$json->other;
+            $age_adder = $json->age_adder;
+            $address_adder =$json->address_adder;
+            $about_tradition = $json->about_tradition;
+            $about_religion = $json->about_religion;
+            $age = $json->age;
+            $user_id = $json->user_id;
+            $currentTime = new DateTime();
+            $createdAt = $currentTime->format('Y-m-d H:i:s');
             $sql= $this->db->prepare("
             SELECT COUNT(*) as total FROM tb_plant
             ");
@@ -97,7 +97,54 @@
             }else{
                 $pid = intval($total) +1;
             }
-            echo json_encode($pid,JSON_PRETTY_PRINT);
+            $sqladd = $this->db->prepare("
+            insert into tb_plant (
+                plant_id,
+                plant_name,
+                plant_code,
+                plant_character,
+                distinctive,
+                area,
+                locate_x,
+                locate_y,
+                tambol,
+                amphure,
+                province,
+                zipcode,
+                age,
+                girth,
+                height,
+                status,
+                benefit_foot,
+                benefit_medicine_human,
+                benefit_medicine_animal,
+                benefit_appliances,
+                benefit_pesticide,
+                about_tradition,
+                about_religion,
+                other,
+                name_adder,
+                age_adder,
+                address_adder,
+                date_add,
+                user_id,
+                qty
+                )
+                values('$pid','$plant_name','$plant_id',
+                '$plant_character','$distinctive','$area',
+                '$locate_x','$locate_y','$tambol','$amphure',
+                '$province','$zipcode','$age','$girth','$height',
+                '$status','$benefit_foot','$benefit_medicine_human',
+                '$benefit_medicine_animal','$benefit_appliances',
+                '$benefit_pesticide','$about_tradition','$about_religion',
+                '$other','$name_adder','$age_adder','$address_adder',
+                '$createdAt','$user_id','$qty')
+            ");
+             $sqladd->execute(array());
+            //  $data  = $sqladd->fetchAll(PDO::FETCH_ASSOC);
+             if($sqladd === true){
+                echo json_encode('success');
+             }
         }
 		
 	}
