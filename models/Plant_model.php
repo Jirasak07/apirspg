@@ -170,7 +170,7 @@
                     }
             
                     if (move_uploaded_file($_FILES['file']['tmp_name'], $targetPath)) {
-                        echo json_encode(['message' => 'Upload successful']);
+                        echo json_encode(['message' => $_FILES['file']['tmp_name']]);
                     } else {
                         echo json_encode(['error' => 'Upload failed']);
                     }
