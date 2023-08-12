@@ -178,7 +178,7 @@
                      unlink($delete); 
                 } 
                 if(move_uploaded_file($_FILES["file"]["tmp_name"], $filename."$name.".$imageFileType)){
-                    $img = "'".$filename."$name.".$imageFileType."'";
+                    $img = strval($filename."$name.".$imageFileType);
                     $sqlmaxid = $this->db->prepare("
                     SELECT COUNT(*) total FROM tb_plant_img
                     ");
