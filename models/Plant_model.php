@@ -140,9 +140,9 @@
                 '$other','$name_adder','$age_adder','$address_adder',
                 '$createdAt','$user_id','$qty')
             ");
-             $sqladd->execute(array());
+             
             //  $data  = $sqladd->fetchAll(PDO::FETCH_ASSOC);
-             if($sqladd === true){
+             if($sqladd->execute(array())){
                 echo json_encode('success');
              }
         }
