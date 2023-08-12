@@ -157,31 +157,32 @@
              }
         }
         function uploadImage(){
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                if (isset($_FILES['file'])) {
-                    $uploadDir = 'public/uploadimg/';
-                    $filename = basename($_FILES['file']['name']);
-                    $name = $_POST['name'];  // รับค่าชื่อไฟล์ใหม่จากตัวแปร $_POST['name']
-                    $targetPath = $uploadDir . $name;
-            
-                    // Check if the file exists and delete it
-                    if (file_exists($targetPath)) {
-                        unlink($targetPath);
-                    }
-        echo ($filename);
-        echo ($targetPath);
-        echo ($filename);
-                    // if (move_uploaded_file( $filename, $targetPath)) {
-                    //     echo json_encode(['message' => $filename]);
-                    // } else {
-                    //     echo json_encode(['error' => 'Upload failed']);
-                    // }
-                } else {
-                    echo json_encode(['error' => 'No file uploaded']);
+            $name = $_REQUEST['name'];
+            // $file_name = $_FILES['file']['name'];
+            // $file_size =$_FILES['file']['size'];
+            // $file_tmp =$_FILES['file']['tmp_name'];
+            $file_type=$_FILES['file']['type'];   
+            $filename = "public/uploaddocument/";
+            if (!file_exists($filename)) {
+                    mkdir("public/uploaddocument/", 0777);
+            } 
+            if($file_type === "application/pdf" || $file_type === "image/png" || $file_type === "image/jpg" || $file_type === "image/jpeg"){
+                $files_upload = basename($_FILES["file"]["name"]);
+                $imageFileType = strtolower(pathinfo($files_upload,PATHINFO_EXTENSION));
+                $delete = $filename."/$name.".$imageFileType;
+                if(file_exists($delete)){
+                      unlink($delete); 
+                      if(move_uploaded_file($_FILES["file"]["tmp_name"], $filename."/$name.".$imageFileType)){
+                        echo  json_encode($filename."/$name.".$imageFileType, JSON_PRETTY_PRINT);
+                   }
+                }else if(!file_exists($delete)) {
+                    if(move_uploaded_file($_FILES["file"]["tmp_name"], $filename."/$name.".$imageFileType)){
+                        echo  json_encode($filename."/$name.".$imageFileType, JSON_PRETTY_PRINT);
+                   }
                 }
-            } else {
-                echo json_encode(['error' => 'Invalid request']);
-            }
-	}
+                }else {
+                  echo   json_encode("error", JSON_PRETTY_PRINT);
+                }
+                    }    
 }
 ?>
