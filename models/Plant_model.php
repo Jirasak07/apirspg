@@ -185,13 +185,14 @@
                     $sqlmaxid->execute(array());
                     $total = $sqlmaxid->fetchAll(PDO::FETCH_ASSOC);
                     $total = $total[0]['total'];
+                    $mid = 0;
                     if(intval($total) <= 0){
                         $mid = 1;
                     }else{
                         $mid = intval($total) +1;
                     }
                     $sqlimg = $this->db->prepare("
-                    INSERT INTO tb_plant_img VALUES($mid,'$img','$plantid','$user_id','$createdAt')
+                    INSERT INTO tb_plant_img VALUES('$mid','$img','$plantid','$user_id','$createdAt')
                     ");
                     
                     if($sqlimg->execute(array())){
