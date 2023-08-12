@@ -31,6 +31,9 @@
         function ZipCode(){
             $this->model->ZipCode();
         }
+        function AddPlant(){
+            $this->model->AddPlant();
+        }
 
 	}
 ?>
