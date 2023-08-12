@@ -37,7 +37,7 @@
             $json = json_decode(file_get_contents("php://input"));
             $amphur = $json->amphur;
             $sql = $this->db->prepare("
-            SELECT id AS DISTRICT_ID,name_th AS DISTRICT_NAME  FROM districts AS A  WHERE amphure_id = '$amphur'
+            SELECT id AS DISTRICT_ID,name_th AS DISTRICT_NAME,zip_code  FROM districts AS A  WHERE amphure_id = '$amphur'
             ");
             $sql->execute(array());
             $data = $sql->fetchAll(PDO::FETCH_ASSOC);
