@@ -67,6 +67,12 @@
                                         echo json_encode("info",JSON_PRETTY_PRINT);
                                     }
         }
+        function checkLogin(){
+            $json = json_decode(file_get_contents("php://input"));
+            $token = $json->token;
+            $res = CheckToken($token);
+            echo json_encode($res,JSON_PRETTY_PRINT);
+        }
 }            
                      
 ?>

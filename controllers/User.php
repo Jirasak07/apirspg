@@ -22,6 +22,9 @@
        function Login(){
         $this->model->Login();
        }
+       function checkLogin(){
+        $this->model->checkLogin();
+       }
 
 	}
 ?>
