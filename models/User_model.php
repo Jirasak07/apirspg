@@ -87,7 +87,7 @@
             $id = $json->id;
             $status = $json->status;
             $sql = $this->db->prepare("
-            UPDATE tb_user SET status = '$status' WHERE user_id = '$id'
+            UPDATE tb_user SET status = $status WHERE user_id = $id
             ");
             if($sql->execute(array())){
                 echo json_encode('success',JSON_PRETTY_PRINT);
@@ -100,7 +100,7 @@
             $id = $json->id;
             $user_role = $json->user_role;
             $sql = $this->db->prepare("
-            UPDATE tb_user SET user_role = '$user_role' WHERE user_id = '$id'
+            UPDATE tb_user SET user_role = $user_role WHERE user_id = $id
             ");
             if($sql->execute(array())){
                 echo json_encode('success',JSON_PRETTY_PRINT);
@@ -112,7 +112,7 @@
             $json = json_decode(file_get_contents("php://input"));
             $id = $json->id;
             $sql = $this->db->prepare("
-            SELECT * FROM tb_user  WHERE user_id = '$id'
+            SELECT * FROM tb_user  WHERE user_id = $id
             ");
             if($sql->execute(array())){
                 $data = $sql->fetchAll(PDO::FETCH_ASSOC);
