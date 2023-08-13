@@ -123,6 +123,52 @@
             $data = $sqls->fetchAll(PDO::FETCH_ASSOC);
             echo json_encode($data,JSON_PRETTY_PRINT);
         }
+        function EditProfile(){
+            $json = json_decode(file_get_contents("php://input"));
+            $username = $json->username;
+            $name = $json->name;
+            $organize = $json->organize;
+            $tell_number = $json->tell_number;
+            $citizen = $json->citizen;
+            $id = $json->id;
+            $sql = $this->db->prepare("
+            UPDATE tb_user SET username = '$username',name = '$name',organization = '$organize',tell_number='$tell_number',citizen_id='$citizen' WHERE user_id = '$id'
+            ");
+            $sql->execute(array());
+            echo json_encode('success',JSON_PRETTY_PRINT);
+        }
+        function ChangePass(){
+            $json = json_decode(file_get_contents("php://input"));
+            $newname = $json->username;
+            $id=$json->id;
+            $newpass=$json->newpass;
+            $oldpass =$json->oldpass;
+            // $stored_password = $oldpass;
+            // ทำการเปรียบเทียบรหัสผ่านที่ผู้ใช้ป้อนกับรหัสผ่านที่เก็บในฐานข้อมูล
+            $sql = $this->db->prepare("
+            SELECT * FROM tb_user WHERE user_id = '$id'
+            ");
+            $sql->execute(array());
+            $row = $sql->fetchAll(PDO::FETCH_ASSOC);
+            if(COUNT($row)=== 1){
+                $stored_password = $row[0]['password']; 
+                   // ทำการเปรียบเทียบรหัสผ่านที่ผู้ใช้ป้อนกับรหัสผ่านที่เก็บในฐานข้อมูล
+             if (password_verify($oldpass, $stored_password)) {
+                $hashed_password = password_hash($newpass, PASSWORD_BCRYPT);
+                $sql = $this->db->prepare("
+                UPDATE tb_user SET username = '$newname', password = '$hashed_password' WHERE user_id = '$id'
+                ");
+                $sql->execute(array());
+                echo json_encode("success",JSON_PRETTY_PRINT);
+                } else {
+                    // รหัสผ่านไม่ถูกต้อง
+                    echo json_encode("error",JSON_PRETTY_PRINT);
+                        }
+                                    }else{
+                                        //ไม่พบผู้ใช้
+                                        echo json_encode("info",JSON_PRETTY_PRINT);
+                                    }
+        }
 }            
                      
 ?>

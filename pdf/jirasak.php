@@ -1,10 +1,9 @@
 <?php
 header("Access-Control-Allow-Origin: *");
 require_once('tcpdf.php');
-$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8');
-$pdf->SetFont('thsarabunb', 'B', 16);
-
-//$pdf->writeHTML($datalistfinish,  false, 0, true, 0 );
-
-
-$pdf->Output('tess.pdf', 'I');
+$pdf = new TCPDF();
+$pdf->SetMargins(10, 10, 10);
+$pdf->AddPage();
+$pdf->SetFont('dejavusans', '', 12);
+$pdf->Cell(0, 10, 'Hello, this is a PDF created using TCPDF!', 0, 1, 'C');
+$pdf->Output('example.pdf', 'I');

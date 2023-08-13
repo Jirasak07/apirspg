@@ -37,7 +37,11 @@
        function ShowProfile(){
         $this->model->ShowProfile();
        }
-
-
+       function EditProfile(){
+        $this->model->EditProfile();
+       }
+       function ChangePass(){
+        $this->model->ChangePass();
+       }
 	}
 ?>
