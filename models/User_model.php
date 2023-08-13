@@ -42,7 +42,7 @@
             $username = $json->username;
             $password = $json->password;
             $sql = $this->db->prepare("
-            SELECT * FROM tb_user WHERE username = '$username' AND active = '1'
+            SELECT * FROM tb_user WHERE username = '$username' AND status = '1'
             ");
             $sql->execute(array());
             $row = $sql->fetchAll(PDO::FETCH_ASSOC);
