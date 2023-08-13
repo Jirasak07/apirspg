@@ -35,7 +35,7 @@
         $this->model->EditAuth();
        }
        function ShowProfile(){
-        $this->model->getUser();
+        $this->model->ShowProfile();
        }
 
 

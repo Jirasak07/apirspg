@@ -116,11 +116,11 @@
         function ShowProfile(){
             $json = json_decode(file_get_contents("php://input"));
             $id = $json->id;
-            $sql = $this->db->prepare("
+            $sqls = $this->db->prepare("
             SELECT * FROM tb_user  WHERE user_id = $id
             ");
-            $sql->execute(array());
-            $data = $sql->fetchAll(PDO::FETCH_ASSOC);
+            $sqls->execute(array());
+            $data = $sqls->fetchAll(PDO::FETCH_ASSOC);
             echo json_encode($data,JSON_PRETTY_PRINT);
         }
 }            
