@@ -100,13 +100,10 @@
             $id = $json->id;
             $user_role = $json->user_role;
             $sql = $this->db->prepare("
-            UPDATE tb_user SET user_role = $user_role WHERE user_id = $id
+            UPDATE tb_user SET user_role = $id WHERE user_id = $user_role
             ");
-            if($sql->execute(array())){
-                echo json_encode('success',JSON_PRETTY_PRINT);
-            }else{
-                echo json_encode('error',JSON_PRETTY_PRINT);
-            }
+            $sql->execute(array());
+           echo json_encode("success",JSON_PRETTY_PRINT);
         }
         function ShowProfile(){
             $json = json_decode(file_get_contents("php://input"));
