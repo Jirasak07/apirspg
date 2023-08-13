@@ -1,0 +1,42 @@
+<?php
+ 	header("Content-Type: application/json; charset=UTF-8");
+    header("Access-Control-Allow-Origin: http://localhost:3000");
+	class User_model extends Model{
+		function __construct(){
+				parent::__construct();
+		}
+		function AddUser(){
+            $json = json_decode(file_get_contents("php://input"));
+            $password = $json->password;
+            $name = $json->name;
+            $username = $json->username;
+            $organize = $json->organize;
+            $tell = $json->tell;
+            $citizen = $json->citizen;
+            $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+            $sql = $this->db->prepare("
+            SELECT COUNT(*) AS total FROM tb_user
+            ");
+            $sql->execute(array());
+            $data = $sql->fetchAll(PDO::FETCH_ASSOC);
+            $id = 0;
+            $data = intval($data[0]['total']);
+            if($data <= 0 ){
+                $id = 1;
+            }else{
+                $id = $data +1;
+            }
+            $sqlAdd = $this->db->prepare("
+            INSERT INTO tb_user VALUES('$id','$username','$hashed_password','$name','$organize','2','$tell','$citizen','1')
+            ");
+            if($sqlAdd->execute()){
+                echo json_encode("success",JSON_PRETTY_PRINT);
+            }else{
+                echo json_encode("error",JSON_PRETTY_PRINT);
+            }
+            // $token =  GenarateToken($data[0]['username']);
+            // echo json_encode($token,JSON_PRETTY_PRINT);
+        }	
+}            
+                     
+?>
