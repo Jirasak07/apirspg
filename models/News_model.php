@@ -52,7 +52,7 @@
         }
         function getNew(){
             $sql = $this->db->prepare("
-            SELECT * FROM tb_news WHERE GETDATE() < news_end;
+            SELECT * FROM tb_news WHERE CURDATE() < news_end;
             ");
             $sql->execute(array());
             $data = $sql->fetchAll(PDO::FETCH_ASSOC);

@@ -14,6 +14,13 @@
             $tell = $json->tell;
             $citizen = $json->citizen;
             $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+            $sqlchkusername = $this->db->prepare("
+            SELECT COUNT(*) AS row FROM tb_user WHERE username = '$username'
+             ");
+             $sqlchkusername->execute(array());
+             $datachk = $sqlchkusername->fetchAll(PDO::FETCH_ASSOC);
+             $datachk = intval($datachk[0]['total']);
+             if($datachk ===0){
             $sql = $this->db->prepare("
             SELECT COUNT(*) AS total FROM tb_user
             ");
@@ -34,6 +41,10 @@
             }else{
                 echo json_encode("error",JSON_PRETTY_PRINT);
             }
+             }else{
+                echo json_encode("error",JSON_PRETTY_PRINT);
+             }
+          
             // $token =  GenarateToken($data[0]['username']);
             // echo json_encode($token,JSON_PRETTY_PRINT);
         }	
