@@ -94,7 +94,7 @@ define ('PDF_PAGE_FORMAT', 'A4');
 /**
  * Page orientation (P=portrait, L=landscape).
  */
-define ('PDF_PAGE_ORIENTATION', 'L');
+define ('PDF_PAGE_ORIENTATION', 'P');
 
 /**
  * Document creator.
@@ -134,17 +134,17 @@ define ('PDF_UNIT', 'mm');
 /**
  * Top margin.
  */
-define ('PDF_MARGIN_TOP', 20);
+define ('PDF_MARGIN_TOP', 4);
 
 /**
  * Bottom margin.
  */
-define ('PDF_MARGIN_BOTTOM', 25);
+define ('PDF_MARGIN_BOTTOM', 4);
 
 /**
  * Left margin.
  */
-define ('PDF_MARGIN_LEFT', 15);
+define ('PDF_MARGIN_LEFT', 25);
 
 /**
  * Right margin.
