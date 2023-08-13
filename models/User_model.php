@@ -74,6 +74,53 @@
                 echo json_encode($res,JSON_PRETTY_PRINT);
            
         }
+        function getUser(){
+            $sql= $this->db->prepare("
+            SELECT * FROM tb_user
+            ");
+            $sql->execute(array());
+            $data = $sql->fetchAll(PDO::FETCH_ASSOC);
+            echo json_encode($data,JSON_PRETTY_PRINT);
+        }
+        function EditRole(){
+            $json = json_decode(file_get_contents("php://input"));
+            $id = $json->id;
+            $status = $json->status;
+            $sql = $this->db->prepare("
+            UPDATE tb_user SET status = '$status' WHERE user_id = '$id'
+            ");
+            if($sql->execute(array())){
+                echo json_encode('success',JSON_PRETTY_PRINT);
+            }else{
+                echo json_encode('error',JSON_PRETTY_PRINT);
+            }
+        }
+        function EditAuth(){
+            $json = json_decode(file_get_contents("php://input"));
+            $id = $json->id;
+            $user_role = $json->user_role;
+            $sql = $this->db->prepare("
+            UPDATE tb_user SET user_role = '$user_role' WHERE user_id = '$id'
+            ");
+            if($sql->execute(array())){
+                echo json_encode('success',JSON_PRETTY_PRINT);
+            }else{
+                echo json_encode('error',JSON_PRETTY_PRINT);
+            }
+        }
+        function ShowProfile(){
+            $json = json_decode(file_get_contents("php://input"));
+            $id = $json->id;
+            $sql = $this->db->prepare("
+            SELECT * FROM tb_user  WHERE user_id = '$id'
+            ");
+            if($sql->execute(array())){
+                $data = $sql->fetchAll(PDO::FETCH_ASSOC);
+                echo json_encode($data,JSON_PRETTY_PRINT);
+            }else{
+                echo json_encode('error',JSON_PRETTY_PRINT);
+            }
+        }
 }            
                      
 ?>

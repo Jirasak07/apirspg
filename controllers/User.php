@@ -25,6 +25,19 @@
        function checkLogin(){
         $this->model->checkLogin();
        }
+       function getUser(){
+        $this->model->getUser();
+       }
+       function EditRole(){
+        $this->model->EditRole();
+       }
+       function EditAuth(){
+        $this->model->EditAuth();
+       }
+       function ShowProfile(){
+        $this->model->getUser();
+       }
+
 
 	}
 ?>
