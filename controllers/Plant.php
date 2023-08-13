@@ -37,6 +37,9 @@
         function uploadImage(){
             $this->model->uploadImage();
         }
+        function getPlant(){
+            $this->model->getPlant();
+        }
 
 	}
 ?>
