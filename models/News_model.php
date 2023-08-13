@@ -50,6 +50,14 @@
             echo json_encode("error file type",JSON_PRETTY_PRINT);
         }
         }
+        function getNew(){
+            $sql = $this->db->prepare("
+            SELECT * FROM tb_newse WHERE GETDATE() < news_end;
+            ");
+            $sql->execute(array());
+            $data = $sql->fetchAll(PDO::FETCH_ASSOC);
+            echo json_encode($data,JSON_PRETTY_PRINT);
+        }
 }            
                      
 ?>

@@ -19,5 +19,8 @@
         function AddNews(){
 			$this->model->AddNews();
         }
+        function getNew(){
+			$this->model->getNew();
+        }
 	}
 ?>
