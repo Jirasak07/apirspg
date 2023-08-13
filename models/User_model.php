@@ -50,8 +50,14 @@
                 $stored_password = $row[0]['password']; 
                    // ทำการเปรียบเทียบรหัสผ่านที่ผู้ใช้ป้อนกับรหัสผ่านที่เก็บในฐานข้อมูล
              if (password_verify($password, $stored_password)) {
+                $token = GenarateToken($username);
+                $arr = [
+                    "message"=>"success",
+                    "data"=> $token,
+                    "user_id"=>$row
+                ];
         // รหัสผ่านถูกต้อง
-                 echo json_encode("success",JSON_PRETTY_PRINT);
+                 echo json_encode($arr,JSON_PRETTY_PRINT);
                 } else {
                     // รหัสผ่านไม่ถูกต้อง
                     echo json_encode("error",JSON_PRETTY_PRINT);
