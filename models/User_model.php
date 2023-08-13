@@ -51,11 +51,14 @@
                    // ทำการเปรียบเทียบรหัสผ่านที่ผู้ใช้ป้อนกับรหัสผ่านที่เก็บในฐานข้อมูล
              if (password_verify($password, $stored_password)) {
         // รหัสผ่านถูกต้อง
-                 echo "Login successful";
+                 echo json_encode("success",JSON_PRETTY_PRINT);
                 } else {
                     // รหัสผ่านไม่ถูกต้อง
-                    echo "Invalid password";
+                    echo json_encode("error",JSON_PRETTY_PRINT);
                         }
+                                    }else{
+                                        //ไม่พบผู้ใช้
+                                        echo json_encode("info",JSON_PRETTY_PRINT);
                                     }
         }
 }            
