@@ -45,8 +45,8 @@
             SELECT * FROM tb_user WHERE username = '$username'
             ");
             $sql->execute(array());
-            if($sql->num_rows === 1){
-                $row = $sql->fetchAll(PDO::FETCH_ASSOC);
+            $row = $sql->fetchAll(PDO::FETCH_ASSOC);
+            if(COUNT($row)=== 1){
                 $stored_password = $row[0]['password']; 
                    // ทำการเปรียบเทียบรหัสผ่านที่ผู้ใช้ป้อนกับรหัสผ่านที่เก็บในฐานข้อมูล
              if (password_verify($password, $stored_password)) {
