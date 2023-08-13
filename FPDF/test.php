@@ -96,12 +96,17 @@ $pdf->Cell(0,130,'',1,0,'C');
 $pdf->SetFont('THSarabunNew','B',16);
 $pdf->SetX(30);
 $pdf->Cell(0,10,iconv($utf,$cp,'ผังแสดงตำแหน่งพรรณไม้'),0,1,'C');
-$apiData = file_get_contents('https://rspg-kpppao.com/backend/Plant/SelectProvince');
-$dataArray = json_decode($apiData, true);
-foreach ($dataArray as $data) {
-    $pdf->Cell(40, 10, 'Name: ' . $data['val']);
+$sql= $this->db->prepare("
+SELECT * FROM tb_user
+");
+$sql->execute(array());
+$data = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+// $dataArray = json_decode($apiData, true);
+foreach ($data as $data) {
+    $pdf->Cell(40, 10, 'Name: ' . $data['user_id']);
     $pdf->Ln();
-    $pdf->Cell(40, 10, 'Email: ' . $data['label']);
+    $pdf->Cell(40, 10, 'Email: ' . $data['name']);
     $pdf->Ln();
     // Add more data as needed
     $pdf->Ln();
