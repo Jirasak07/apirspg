@@ -71,7 +71,12 @@
             $json = json_decode(file_get_contents("php://input"));
             $token = $json->token;
             $res = CheckToken($token);
-            echo json_encode($res,JSON_PRETTY_PRINT);
+            if($res === null){
+                echo json_encode($res,JSON_PRETTY_PRINT);
+            }else{
+                // echo json_encode($res,JSON_PRETTY_PRINT);
+            }
+           
         }
 }            
                      
