@@ -58,6 +58,28 @@
             $data = $sql->fetchAll(PDO::FETCH_ASSOC);
             echo json_encode($data,JSON_PRETTY_PRINT);
         }
+        function getEditNews(){
+            $json = json_decode(file_get_contents("php://input"));
+            $news_id = $json->news_id;
+            $sql = $this->db->prepare("
+            SELECT * FROM tb_news WHERE news_id = '$news_id';
+            ");
+            $sql->execute(array());
+            $data = $sql->fetchAll(PDO::FETCH_ASSOC);
+            echo json_encode($data,JSON_PRETTY_PRINT);
+        }
+        function EditNews(){
+            $json = json_decode(file_get_contents("php://input"));
+            $news_id = $json->news_id;
+            $news_title = $json->news_title;
+            $url_news = $json->url_news;
+            $news_end = $json->news_end;
+            $sqlUpdate = $this->db->prepare("
+            UPDATE tb_news SET news_title = '$news_title' ,url_news = '$url_news',news_end = '$news_end' WHERE  news_id = '$news_id'
+            ");
+            $sqlUpdate->execute(array());
+            echo json_encode("success",JSON_PRETTY_PRINT);
+        }
 }            
                      
 ?>

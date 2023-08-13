@@ -22,5 +22,11 @@
         function getNew(){
 			$this->model->getNew();
         }
+        function getEditNews(){
+			$this->model->getEditNews();
+        }
+        function EditNews(){
+			$this->model->EditNews();
+        }
 	}
 ?>
