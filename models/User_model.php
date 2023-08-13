@@ -37,6 +37,27 @@
             // $token =  GenarateToken($data[0]['username']);
             // echo json_encode($token,JSON_PRETTY_PRINT);
         }	
+        function Login(){
+            $json = json_decode(file_get_contents("php://input"));
+            $username = $json->username;
+            $password = $json->password;
+            $sql = $this->db->prepare("
+            SELECT * FROM tb_user WHERE username = '$username'
+            ");
+            $sql->execute(array());
+            if($sql->num_rows === 1){
+                $row = $sql->fetchAll(PDO::FETCH_ASSOC);
+                $stored_password = $row[0]['password']; 
+                   // ทำการเปรียบเทียบรหัสผ่านที่ผู้ใช้ป้อนกับรหัสผ่านที่เก็บในฐานข้อมูล
+             if (password_verify($password, $stored_password)) {
+        // รหัสผ่านถูกต้อง
+                 echo "Login successful";
+                } else {
+                    // รหัสผ่านไม่ถูกต้อง
+                    echo "Invalid password";
+                        }
+                                    }
+        }
 }            
                      
 ?>

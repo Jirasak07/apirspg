@@ -19,6 +19,9 @@
        function AddUser(){
         $this->model->AddUser();
        }
+       function Login(){
+        $this->model->Login();
+       }
 
 	}
 ?>
