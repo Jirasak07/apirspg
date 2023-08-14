@@ -216,13 +216,23 @@
     }
     function Search(){
         $json = json_decode(file_get_contents("php://input"));
-        $name = $json->name;
+        $input = json_decode($inputJSON, true);
+        // $name = $json->name;
+        if(isset($input['name'])) {
+            $name = $input['name'];
+            echo "error"
+        } else {
         $sql = $this->db->prepare("
         SELECT *,(SELECT C.image_name FROM tb_plant_img AS C WHERE C.plant_id = A.plant_id ORDER BY C.img_id DESC LIMIT 1) AS img FROM `tb_plant` AS A WHERE plant_name LIKE '%$name%'
         ");
         $sql->execute(array());
         $data = $sql->fetchAll(PDO::FETCH_ASSOC);
-        echo json_encode($data,JSON_PRETTY_PRINT);
+        if($sql->execute(array())){
+          echo json_encode($data,JSON_PRETTY_PRINT);  
+        }else{
+            echo "error";
+        }
+       }  
     }
 }            
                      
