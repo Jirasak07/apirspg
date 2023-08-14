@@ -8,6 +8,7 @@
 		function AddNews(){
             $name = $_REQUEST['title'];
             $enddate = $_REQUEST['enddate'];
+            $url = $_REQUEST['url'];
             $file_type=$_FILES['file']['type'];   
             $currentTime = new DateTime();
             $createdAt = $currentTime->format('Y-m-d H:i:s');
@@ -37,7 +38,7 @@
                         $mid = intval($total) +1;
                     }
                     $sqlimg = $this->db->prepare("
-                    INSERT INTO tb_news VALUES('$mid','$name','-','$img',CURRENT_TIMESTAMP(),'$enddate')
+                    INSERT INTO tb_news VALUES('$mid','$name','$url','$img',CURRENT_TIMESTAMP(),'$enddate')
                     ");
                     
                     if($sqlimg->execute(array())){
