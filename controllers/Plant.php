@@ -34,5 +34,8 @@
         function Search(){
             $this->model->Search();
         }
+        function detailPlant(){
+            $this->model->detailPlant();
+        }
 	}
 ?>
