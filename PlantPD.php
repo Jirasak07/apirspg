@@ -7,7 +7,7 @@ $mpdf = new \Mpdf\Mpdf([
 $html = '<div style="color:red;text-align:center" >
 <div>Hello World สวัสดีครับ</div></div>';
 $mpdf->WriteHTML($html);
-$mpdf->WriteCell(0,0,'sdsdsdsd',0,0,'C');
+// $mpdf->WriteCell(0,0,'sdsdsdsd',0,0,'C');
 
 $mpdf->Output();
 ?>
