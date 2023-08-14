@@ -28,6 +28,9 @@
         function uploadImage(){
             $this->model->uploadImage();
         }
+        function updateImage(){
+            $this->model->updateImage();
+        }
         function getPlant(){
             $this->model->getPlant();
         }
