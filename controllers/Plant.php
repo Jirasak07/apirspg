@@ -43,5 +43,8 @@
         function PlantEdit(){
             $this->model->PlantEdit();
         }
+        function ShowImage(){
+            $this->model->ShowImage();
+        }
 	}
 ?>

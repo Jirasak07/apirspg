@@ -229,7 +229,10 @@ class Plant_model extends Model
         $json = json_decode(file_get_contents("php://input"));
         $id = $json->id;
         $sql = $this->db->prepare("
-        SELECT *,(SELECT C.image_name FROM tb_plant_img AS C WHERE C.plant_id = A.plant_id ORDER BY C.img_id DESC LIMIT 1) AS img,(SELECT name FROM tb_user WHERE user_id = A.user_id) AS useredit FROM `tb_plant` AS A WHERE plant_id = '$id';
+        SELECT *,(SELECT name_th FROM provinces WHERE id = A.province) AS province,
+        (SELECT name_th FROM amphures WHERE id = A.amphure) AS amphur,
+        (SELECT name_th FROM districts WHERE id = A.tumbol) AS tumbol,
+        (SELECT C.image_name FROM tb_plant_img AS C WHERE C.plant_id = A.plant_id ORDER BY C.img_id DESC LIMIT 1) AS img,(SELECT name FROM tb_user WHERE user_id = A.user_id) AS useredit FROM `tb_plant` AS A WHERE plant_id = '$id';
         ");
         $sql->execute(array());
         $data = $sql->fetchAll(PDO::FETCH_ASSOC);
@@ -275,9 +278,9 @@ class Plant_model extends Model
         $area = $json->area;
         $lacate_x = $json->lacate_x;
         $locate_y = $json->locate_y;
-        $tumbol = $json->tumbol;
-        $amphure = $json->amphure;
-        $province = $json->province;
+        // $tumbol = $json->tumbol;
+        // $amphure = $json->amphure;
+        // $province = $json->province;
         $age = $json->age;
         $girth = $json->girth;
         $height = $json->height;
@@ -297,20 +300,29 @@ class Plant_model extends Model
         $qty = $json->qty;
         $currentTime = new DateTime();
         $createdAt = $currentTime->format('Y-m-d H:i:s');
-        // $other = $_GET['other'];
         $sql = $this->db->prepare("
         UPDATE tb_plant SET plant_name = '$plant_name',plant_code = '$plant_code',plant_character='$plant_character',
-        distinctive='$distinctive',area='$area',lacate_x='$lacate_x',locate_y='$locate_y',tumbol='$tumbol',amphure='$amphure',
-        province='$province',age='$age',girth='$girth',height='$height',statuss='$statuss',benefit_foot='$benefit_foot',
+        distinctive='$distinctive',area='$area',lacate_x='$lacate_x',locate_y='$locate_y',
+      age='$age',girth='$girth',height='$height',statuss='$statuss',benefit_foot='$benefit_foot',
         benefit_medicine_human='$benefit_medicine_human',benefit_medicine_animal='$benefit_medicine_animal',benefit_appliances='$benefit_appliances',
         benefit_pesticide='$benefit_pesticide',about_tradition='$about_tradition',about_religion='$about_religion',other='$other',name_adder='$name_adder',
         age_adder='$age_adder',address_adder='$address_adder',date_add='$createdAt',user_id='$user_id',qty='$qty' WHERE plant_id = '$plant_id'
         ");
         $sql->execute(array());
-        if($sql->execute()){
-            echo json_encode("success",JSON_PRETTY_PRINT);
-        }else{
-            echo json_encode("error",JSON_PRETTY_PRINT);
+        if ($sql->execute()) {
+            echo json_encode("success", JSON_PRETTY_PRINT);
+        } else {
+            echo json_encode("error", JSON_PRETTY_PRINT);
         }
+    }
+    function ShowImage(){
+        $json = json_decode(file_get_contents("php://input"));
+        $id = $json->id;
+        $sql=$this->db->prepare("
+        SELECT * FROM tb_plant_img WHERE plant_id = '$id'
+        ");
+        $sql->execute(array());
+        $data = $sql->fetchAll(PDO::FETCH_ASSOC);
+        echo json_encode($data,JSON_PRETTY_PRINT);
     }
 }
