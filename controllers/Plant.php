@@ -40,5 +40,8 @@
         function Print(){
             $this->model->Print();
         }
+        function PlantEdit(){
+            $this->model->PlantEdit();
+        }
 	}
 ?>
