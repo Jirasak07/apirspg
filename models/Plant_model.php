@@ -224,6 +224,15 @@
         $data = $sql->fetchAll(PDO::FETCH_ASSOC);
         echo json_encode($data,JSON_PRETTY_PRINT);
     }
+    function Print(){
+        $id = $_GET['id'];
+        $sql = $this->db->prepare("
+        SELECT *,(SELECT C.image_name FROM tb_plant_img AS C WHERE C.plant_id = A.plant_id ORDER BY C.img_id DESC LIMIT 1) AS img,(SELECT name FROM tb_user WHERE user_id = A.user_id) AS useredit FROM `tb_plant` AS A WHERE plant_id = '$id';
+        ");
+        $sql->execute(array());
+        $data = $sql->fetchAll(PDO::FETCH_ASSOC);
+        echo json_encode($data,JSON_PRETTY_PRINT);
+    }
     function Search(){
         if (isset($_POST['name'])) {
             $name = $_POST['name'];

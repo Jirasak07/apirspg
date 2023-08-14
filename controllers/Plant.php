@@ -37,5 +37,8 @@
         function detailPlant(){
             $this->model->detailPlant();
         }
+        function Print(){
+            $this->model->Print();
+        }
 	}
 ?>
