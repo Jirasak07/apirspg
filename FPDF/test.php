@@ -103,14 +103,7 @@ $sql->execute(array());
 $data = $sql->fetchAll(PDO::FETCH_ASSOC);
 
 // $dataArray = json_decode($apiData, true);
-foreach ($data as $data) {
-    $pdf->Cell(40, 10, 'Name: ' . $data['user_id']);
-    $pdf->Ln();
-    $pdf->Cell(40, 10, 'Email: ' . $data['name']);
-    $pdf->Ln();
-    // Add more data as needed
-    $pdf->Ln();
-}
+echo json_encode($data);
 $pdf->Output();
 ?>
 
