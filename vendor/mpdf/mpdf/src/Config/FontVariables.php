@@ -93,12 +93,12 @@ class FontVariables
 			 */
 
 			'fontdata' => [
-				"Sarabun" => [
+				"sarabun" => [
 					'R' => "THSarabun.ttf",
-					'B' => "THSarabun Bold.ttf",
-					'I' => "THSarabun Italic.ttf",
-					'BI' => "THSarabun Bold Italic.ttf",
-					'useOTL' => 0xFF,
+					'B' => "THSarabunBold.ttf",
+					'I' => "THSarabunItalic.ttf",
+					'BI' => "THSarabun-Bold-Italic.ttf",
+					'useOTL' => 0x00,
 					'useKashida' => 75,
 				],
 				"dejavusanscondensed" => [
@@ -106,7 +106,7 @@ class FontVariables
 					'B' => "DejaVuSansCondensed-Bold.ttf",
 					'I' => "DejaVuSansCondensed-Oblique.ttf",
 					'BI' => "DejaVuSansCondensed-BoldOblique.ttf",
-					'useOTL' => 0x00,
+					'useOTL' => 0xFF,
 					'useKashida' => 75,
 				],
 				"dejavusans" => [
