@@ -232,14 +232,15 @@ class Plant_model extends Model
         if ($file_type === "image/png" || $file_type === "image/jpg" || $file_type === "image/jpeg") {
             $files_upload = basename($_FILES["file"]["name"]);
             $imageFileType = strtolower(pathinfo($files_upload, PATHINFO_EXTENSION));
-            $delete = $filename . "/$name." . $imageFileType;
+            $delete = $filename . "$name." . $imageFileType;
             if (file_exists($delete)) {
                 unlink($delete);
             }
             if (move_uploaded_file($_FILES["file"]["tmp_name"], $filename . "$name." . $imageFileType)) {
                 $img = strval($filename . "$name." . $imageFileType);
+                // $imgc = strval($filename . "$name");
                 $sqll = $this->db->prepare("
-                SELECT COUNT(*) AS t , img_id FROM tb_plant_img WHERE image_name = '$img'
+                SELECT COUNT(*) AS t FROM tb_plant_img WHERE image_name LIKE '%$name%'
                 ");
                 $sqll->execute(array());
                 $total = $sqll->fetchAll(PDO::FETCH_ASSOC);
@@ -248,8 +249,11 @@ class Plant_model extends Model
                     $sqld = $this->db->prepare("
                     UPDATE tb_plnant_img SET user_id = '$user_id',image_date = CURRENT_TIMESTAMP() WHERE image_name = '$img'
                     ");
-                    $sqld->execute(array());
-                    echo json_encode("success", JSON_PRETTY_PRINT);
+                    if ($sqld->execute(array())) {
+                        echo json_encode("success", JSON_PRETTY_PRINT);
+                    } else {
+                        echo json_encode("error", JSON_PRETTY_PRINT);
+                    }
                 } else {
                     $sqlmaxid = $this->db->prepare("
                     SELECT COUNT(*) total FROM tb_plant_img
