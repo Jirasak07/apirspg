@@ -95,7 +95,7 @@ $pdf->Cell(0,130,'',1,0,'C');
 $pdf->SetFont('THSarabunNew','B',16);
 $pdf->SetX(30);
 $pdf->Cell(0,10,iconv($utf,$cp,'ผังแสดงตำแหน่งพรรณไม้'),0,1,'C');
-$pdf->Output();
+$pdf->Output('postpone.pdf', 'I');
 ?>
 
 
