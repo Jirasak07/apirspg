@@ -227,7 +227,10 @@
     function Print(){
         $id = $_GET['id'];
         $sql = $this->db->prepare("
-        SELECT *,(SELECT C.image_name FROM tb_plant_img AS C WHERE C.plant_id = A.plant_id ORDER BY C.img_id DESC LIMIT 1) AS img,(SELECT name FROM tb_user WHERE user_id = A.user_id) AS useredit FROM `tb_plant` AS A WHERE plant_id = '$id';
+        SELECT *,(SELECT name_th FROM provinces WHERE id = A.province) AS province,
+        (SELECT nam_th FROM amphures WHERE id = A.amphure) AS amphur,
+        (SELECT name_th FROM districts WHERE id = A.tumbol) AS tumbol
+        ,(SELECT C.image_name FROM tb_plant_img AS C WHERE C.plant_id = A.plant_id ORDER BY C.img_id DESC LIMIT 1) AS img,(SELECT name FROM tb_user WHERE user_id = A.user_id) AS useredit FROM `tb_plant` AS A WHERE plant_id = '$id';
         ");
         $sql->execute(array());
         $data = $sql->fetchAll(PDO::FETCH_ASSOC);
