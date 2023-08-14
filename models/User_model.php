@@ -19,7 +19,7 @@
              ");
              $sqlchkusername->execute(array());
              $datachk = $sqlchkusername->fetchAll(PDO::FETCH_ASSOC);
-             $datachk = intval($datachk[0]['total']);
+             $datachk = intval($datachk[0]['row']);
              if($datachk ===0){
             $sql = $this->db->prepare("
             SELECT COUNT(*) AS total FROM tb_user
