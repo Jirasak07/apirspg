@@ -31,5 +31,8 @@
         function getPlant(){
             $this->model->getPlant();
         }
+        function Search(){
+            $this->model->Search();
+        }
 	}
 ?>

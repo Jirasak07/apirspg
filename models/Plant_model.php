@@ -214,6 +214,16 @@
         $data = $sql->fetchAll(PDO::FETCH_ASSOC);
         echo json_encode($data,JSON_PRETTY_PRINT);
     }
+    function Search(){
+        $json = json_decode(file_get_contents("php://input"));
+        $name = $json->name;
+        $sql = $this->db->prepare("
+        SELECT *,(SELECT C.image_name FROM tb_plant_img AS C WHERE C.plant_id = A.plant_id ORDER BY C.img_id DESC LIMIT 1) AS img FROM `tb_plant` AS A WHERE plant_name LIKE '%$name%'
+        ");
+        $sql->execute(array());
+        $data = $sql->fetchAll(PDO::FETCH_ASSOC);
+        echo json_encode($data,JSON_PRETTY_PRINT);
+    }
 }            
                      
 ?>
