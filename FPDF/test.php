@@ -96,14 +96,6 @@ $pdf->Cell(0,130,'',1,0,'C');
 $pdf->SetFont('THSarabunNew','B',16);
 $pdf->SetX(30);
 $pdf->Cell(0,10,iconv($utf,$cp,'ผังแสดงตำแหน่งพรรณไม้'),0,1,'C');
-$sql= $this->db->prepare("
-SELECT * FROM tb_user
-");
-$sql->execute(array());
-$data = $sql->fetchAll(PDO::FETCH_ASSOC);
-
-// $dataArray = json_decode($apiData, true);
-echo json_encode($data);
 $pdf->Output();
 ?>
 
