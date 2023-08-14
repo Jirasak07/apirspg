@@ -28,5 +28,8 @@
         function EditNews(){
 			$this->model->EditNews();
         }
+        function getNewTable(){
+			$this->model->getNewTable();
+        }
 	}
 ?>

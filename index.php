@@ -19,6 +19,7 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization");
         
         require 'config/paths.php';
 		require 'config/database.php';
+		define ('FPDF_FONTPATH','public/fpdf/font/');
 
         // require 'public/jwt/JWT.php';
 		include_once 'public/jwt/BeforeValidException.php';
