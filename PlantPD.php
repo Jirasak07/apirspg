@@ -4,6 +4,9 @@ $mpdf = new \Mpdf\Mpdf([
     'default_font_size'=>16,
     'default_font'=>'sarabun'
 ]);
-$mpdf->WriteHTML('<div>สวัสดี</div>');
+
+$pagecount = $mpdf->setSourceFile('/as-2.pdf');
+$tplId = $mpdf->importPage($pagecount);
+$mpdf->useTemplate($tplId);
 $mpdf->Output();
 ?>

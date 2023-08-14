@@ -13,14 +13,11 @@ use Mpdf\Language\ScriptToLanguageInterface;
 use Mpdf\Log\Context as LogContext;
 use Mpdf\Mpdf;
 use Mpdf\Otl;
-use Mpdf\PsrLogAwareTrait\PsrLogAwareTrait;
 use Mpdf\SizeConverter;
 use Psr\Log\LoggerInterface;
 
 class ImageProcessor implements \Psr\Log\LoggerAwareInterface
 {
-
-	use PsrLogAwareTrait;
 
 	/**
 	 * @var \Mpdf\Mpdf
@@ -92,6 +89,11 @@ class ImageProcessor implements \Psr\Log\LoggerAwareInterface
 	 */
 	private $assetFetcher;
 
+	/**
+	 * @var \Psr\Log\LoggerInterface
+	 */
+	public $logger;
+
 	public function __construct(
 		Mpdf $mpdf,
 		Otl $otl,
@@ -124,6 +126,18 @@ class ImageProcessor implements \Psr\Log\LoggerAwareInterface
 		$this->failedImages = [];
 	}
 
+	/**
+	 * @param \Psr\Log\LoggerInterface
+	 *
+	 * @return self
+	 */
+	public function setLogger(LoggerInterface $logger)
+	{
+		$this->logger = $logger;
+
+		return $this;
+	}
+
 	public function getImage(&$file, $firstTime = true, $allowvector = true, $orig_srcpath = false, $interpolation = false)
 	{
 		// mPDF 6
@@ -142,7 +156,7 @@ class ImageProcessor implements \Psr\Log\LoggerAwareInterface
 			$file = md5($data);
 		}
 
-		if (preg_match('/data:image\/(gif|jpe?g|png|webp|svg\+xml);base64,(.*)/', $file, $v)) {
+		if (preg_match('/data:image\/(gif|jpe?g|png|webp);base64,(.*)/', $file, $v)) {
 			$type = $v[1];
 			$data = base64_decode($v[2]);
 			$file = md5($data);
@@ -201,7 +215,7 @@ class ImageProcessor implements \Psr\Log\LoggerAwareInterface
 			$type = $this->guesser->guess($data);
 		}
 
-		if ($type === 'svg' || $type === 'svg+xml') {
+		if ($type === 'svg') {
 			if (!$allowvector) {
 				return $this->imageError($file, $firstTime, 'SVG image file not supported in this context');
 			}
