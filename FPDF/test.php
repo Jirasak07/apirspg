@@ -1,7 +1,6 @@
 <?php
 header("Access-Control-Allow-Origin: *");
 require('./fpdf.php');
-require_once("fpdi/fpdi.php");
 $pdf = new FPDF();
 $pdf->SetMargins(20, 0, 20); 
 $pdf->AddPage();
