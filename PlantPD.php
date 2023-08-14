@@ -5,7 +5,7 @@ $mpdf = new \Mpdf\Mpdf([
     'default_font'=>'sarabun'
 ]);
 
-$pagecount = $mpdf->setSourceFile('/as-2.pdf');
+$pagecount = $mpdf->setSourceFile('as-2.pdf');
 $tplId = $mpdf->importPage($pagecount);
 $mpdf->useTemplate($tplId);
 $mpdf->Output();
