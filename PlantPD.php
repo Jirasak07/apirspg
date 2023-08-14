@@ -14,10 +14,10 @@ $mpdf = new \Mpdf\Mpdf([
 $pagecount = $mpdf->setSourceFile('as-2.pdf');
 $tplId = $mpdf->importPage($pagecount);
 $mpdf->useTemplate($tplId);
-foreach ($data as $item) {
-$cell = "".$item['plant_name']."";
-$mpdf->WriteCell(0,0,$cell);
-}
-$mpdf->WriteHTML($table);
+$mpdf->Ln(50);
+$mpdf->SetX(20);
+$mpdf->WriteCell(0,0,$data[0]['plant_name'],0,1,'L');
+
+// $mpdf->WriteHTML($table);
 $mpdf->Output();
 ?>
