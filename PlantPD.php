@@ -1,7 +1,15 @@
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
+if(isset($_GET['id']) && is_numeric($_GET['id'])) {
+    $id = $_GET['id'];
 
-$api_url = 'https://rspg-kpppao.com/backend/Plant/Print/?id=1';
+    // ทำตามการประมวลผลที่ต้องการกับ $id ที่ถูกกรองแล้ว
+} else {
+    // กรณีไม่ได้รับ id ที่ถูกต้องหรือไม่มี id
+    // ให้รับมือกับสถานการณ์นี้อย่างเหมาะสม
+    $id = 0;
+}
+$api_url = 'https://rspg-kpppao.com/backend/Plant/Print/?id='.$id;
 $response = file_get_contents($api_url);
 $data = json_decode($response, true); // แปลง JSON เป็น array
 
