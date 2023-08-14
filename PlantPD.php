@@ -4,9 +4,7 @@ $mpdf = new \Mpdf\Mpdf([
     'default_font_size'=>16,
     'default_font'=>'sarabun'
 ]);
-$html = '<div style="text-align:center" >Hello World สวัสดีครับ</div>';
-$mpdf->SetTmportUse();
-$mpdf->SetDocTemplate('as-2.pdf',true);
-$mpdf->WriteHTML($html);
+$mpdf->SetImportUse(); // only with mPDF <8.0
+$mpdf->SetDocTemplate('/as-2.pdf',true);
 $mpdf->Output();
 ?>
