@@ -264,7 +264,7 @@ $age = $data[0]['age_adder'];
 $ageAsString = strval($age);
 $mpdf->WriteCell(20, 0, $ageAsString , 0, 0, 'L');
 $mpdf->Ln(6);
-$distinctive = $data[0]['about_religion'];
+$distinctive = $data[0]['address_adder'];
 if (mb_strlen($distinctive, 'utf-8') > 60) {
     $sub = mb_substr($distinctive, 0,90, 'utf-8');
     $mpdf->SetX(37);
@@ -275,6 +275,9 @@ if (mb_strlen($distinctive, 'utf-8') > 60) {
         $mpdf->SetX(30);
         $mpdf->WriteCell(20, 0, $sub, 0, 0, 'L');
     }
+}else{
+    $mpdf->SetX(37);
+    $mpdf->WriteCell(20, 0,$data[0]['address_adder'], 0, 0, 'L');
 }
 $mpdf->AddPage();
 $pagecount3 = $mpdf->setSourceFile('as-4.pdf');
