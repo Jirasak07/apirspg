@@ -22,7 +22,7 @@
              $datachk = intval($datachk[0]['row']);
              if($datachk ===0){
             $sql = $this->db->prepare("
-            SELECT COUNT(*) AS total FROM tb_user
+            SELECT MAX(user_id) AS total FROM tb_user
             ");
             $sql->execute(array());
             $data = $sql->fetchAll(PDO::FETCH_ASSOC);
