@@ -182,9 +182,17 @@ class Plant_model extends Model
         if ($file_type === "image/png" || $file_type === "image/jpg" || $file_type === "image/jpeg") {
             $files_upload = basename($_FILES["file"]["name"]);
             $imageFileType = strtolower(pathinfo($files_upload, PATHINFO_EXTENSION));
-            $delete = $filename . "/$name." . $imageFileType;
+            $delete = $filename . "/$name.png";
+            $delete1 = $filename . "/$name.jpeg";
+            $delete2 = $filename . "/$name.jpg";
             if (file_exists($delete)) {
                 unlink($delete);
+            }
+            if (file_exists($delete1)) {
+                unlink($delete1);
+            }
+            if (file_exists($delete2)) {
+                unlink($delete2);
             }
             if (move_uploaded_file($_FILES["file"]["tmp_name"], $filename . "$name." . $imageFileType)) {
                 $img = strval($filename . "$name." . $imageFileType);
@@ -232,9 +240,17 @@ class Plant_model extends Model
         if ($file_type === "image/png" || $file_type === "image/jpg" || $file_type === "image/jpeg") {
             $files_upload = basename($_FILES["file"]["name"]);
             $imageFileType = strtolower(pathinfo($files_upload, PATHINFO_EXTENSION));
-            $delete = $filename . "$name." . $imageFileType;
+            $delete = $filename . "/$name.png";
+            $delete1 = $filename . "/$name.jpeg";
+            $delete2 = $filename . "/$name.jpg";
             if (file_exists($delete)) {
                 unlink($delete);
+            }
+            if (file_exists($delete1)) {
+                unlink($delete1);
+            }
+            if (file_exists($delete2)) {
+                unlink($delete2);
             }
             if (move_uploaded_file($_FILES["file"]["tmp_name"], $filename . "$name." . $imageFileType)) {
                 $img = strval($filename . "$name." . $imageFileType);
@@ -281,6 +297,81 @@ class Plant_model extends Model
             echo json_encode("error file type", JSON_PRETTY_PRINT);
         }
     }
+    // public function uploadOtherImage()
+    // {
+    //     $name = $_REQUEST['name'];
+    //     $plantid = $_REQUEST['plant_id'];
+    //     $user_id = $_REQUEST['user_id'];
+    //     // $file_name = $_FILES['file']['name'];
+    //     // $file_size =$_FILES['file']['size'];
+    //     // $file_tmp =$_FILES['file']['tmp_name'];
+    //     $file_type = $_FILES['file']['type'];
+    //     $currentTime = new DateTime();
+    //     $createdAt = $currentTime->format('Y-m-d H:i:s');
+    //     $filename = "public/uploadimg/";
+    //     if (!file_exists($filename)) {
+    //         mkdir("public/uploadimg/", 0777);
+    //     }
+    //     if ($file_type === "image/png" || $file_type === "image/jpg" || $file_type === "image/jpeg") {
+    //         $files_upload = basename($_FILES["file"]["name"]);
+    //         $imageFileType = strtolower(pathinfo($files_upload, PATHINFO_EXTENSION));
+    //         $delete = $filename . "/$name.png";
+    //         $delete1 = $filename . "/$name.jpeg";
+    //         $delete2 = $filename . "/$name.jpg";
+    //         if (file_exists($delete)) {
+    //             unlink($delete);
+    //         }
+    //         if (file_exists($delete1)) {
+    //             unlink($delete1);
+    //         }
+    //         if (file_exists($delete2)) {
+    //             unlink($delete2);
+    //         }
+    //         if (move_uploaded_file($_FILES["file"]["tmp_name"], $filename . "$name." . $imageFileType)) {
+    //             $img = strval($filename . "$name." . $imageFileType);
+    //             // $imgc = strval($filename . "$name");
+    //             $sqll = $this->db->prepare("
+    //             SELECT COUNT(*) AS t FROM tb_plant_img WHERE image_name LIKE '%$name%'
+    //             ");
+    //             $sqll->execute(array());
+    //             $total = $sqll->fetchAll(PDO::FETCH_ASSOC);
+    //             $total = $total[0]['t'];
+    //             if (intval($total) !== 0) {
+    //                 $sqld = $this->db->prepare("
+    //                 UPDATE tb_plnant_img SET user_id = '$user_id',image_date = CURRENT_TIMESTAMP() WHERE image_name = '$img'
+    //                 ");
+    //                 if ($sqld->execute(array())) {
+    //                     echo json_encode("success", JSON_PRETTY_PRINT);
+    //                 } else {
+    //                     echo json_encode("error", JSON_PRETTY_PRINT);
+    //                 }
+    //             } else {
+    //                 $sqlmaxid = $this->db->prepare("
+    //                 SELECT COUNT(*) total FROM tb_plant_img
+    //                 ");
+    //                 $sqlmaxid->execute(array());
+    //                 $total = $sqlmaxid->fetchAll(PDO::FETCH_ASSOC);
+    //                 $total = $total[0]['total'];
+    //                 $mid = 0;
+    //                 if (intval($total) <= 0) {
+    //                     $mid = 1;
+    //                 } else {
+    //                     $mid = intval($total) + 1;
+    //                 }
+    //                 $sqlimg = $this->db->prepare("
+    //                 INSERT INTO tb_plant_img VALUES('$mid','$img','$plantid','$user_id',CURRENT_TIMESTAMP())
+    //                 ");
+    //                 if ($sqlimg->execute(array())) {
+    //                     echo json_encode("success", JSON_PRETTY_PRINT);
+    //                 } else {
+    //                     echo json_encode("error", JSON_PRETTY_PRINT);
+    //                 }
+    //             }
+    //         }
+    //     } else {
+    //         echo json_encode("error file type", JSON_PRETTY_PRINT);
+    //     }
+    // }
     public function getPlant()
     {
         $json = json_decode(file_get_contents("php://input"));
