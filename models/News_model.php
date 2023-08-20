@@ -89,6 +89,43 @@
             $sqlUpdate->execute(array());
             echo json_encode("success",JSON_PRETTY_PRINT);
         }
+        function AddActiv(){
+            $ac_title = $_REQUEST['ac_title'];
+            $ac_detail = $_REQUEST['ac_title'];
+            $ac_file = $_FILES['ac_file'];
+            $user_id = $_REQUEST['user_id'];
+            $file_type=$_FILES['ac_file']['type'];  
+            $path2save = 'public/uploadfileac/';
+            if (!file_exists($path2save)) {
+                mkdir("public/uploadfileac/", 0777);
+        } 
+            if($file_type === 'application/pdf'){
+                    $files_upload = basename($_FILES["ac_file"]["name"]);
+                    $imageFileType = strtolower(pathinfo($files_upload,PATHINFO_EXTENSION));
+                if(move_uploaded_file($_FILES["ac_file"]["tmp_name"], $path2save."$ac_title.".$imageFileType)){
+                    $pathfile = strval($path2save."$ac_title.".$imageFileType);
+                    $sqlchkid = $this->db->prepare("
+                        SELECT COUNT(*) AS TOTAL FROM tb_activty 
+                    ");
+                    $sqlchkid->execute(array());
+                    $id = $sqlchkid->fetchAll(PDO::FETCH_ASSOC);
+                    $id = intval($id[0]['TOTAL']);
+                    if($id <=0){
+                        $acid = 1;
+                    }else{
+                        $acid = $id+1;
+                    }
+                    $sqladd = $this->db->prepare("
+                    INSERT INTO tb_activty VALUES('$acid','$ac_title','$ac_detail',CURRENT_TIMESTAMP(),'$pathfile','$user_id')
+                    ");
+
+
+            }else{
+                echo json_encode("รองรับไฟล์เอกสารเฉพาะ pdf เท่านั้น",JSON_PRETTY_PRINT);
+            }
+
+
+        }
 }            
                      
 ?>
