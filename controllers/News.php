@@ -43,4 +43,8 @@ class News extends Controller
     {
         $this->model->AddActiv();
     }
+    public function AddImgNews()
+    {
+        $this->model->AddImgNews();
+    }
 }
