@@ -47,4 +47,12 @@ class News extends Controller
     {
         $this->model->AddImgNews();
     }
+    public function DeleteActiv()
+    {
+        $this->model->DeleteActiv();
+    }
+    public function getActivity()
+    {
+        $this->model->getActivity();
+    }
 }
