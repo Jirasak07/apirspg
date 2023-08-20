@@ -55,4 +55,12 @@ class News extends Controller
     {
         $this->model->getActivity();
     }
+    public function getImgActiv()
+    {
+        $this->model->getImgActiv();
+    }
+    public function DetailActiv()
+    {
+        $this->model->DetailActiv();
+    }
 }
