@@ -89,9 +89,10 @@
             $sqlUpdate->execute(array());
             echo json_encode("success",JSON_PRETTY_PRINT);
         }
+        
         function AddActiv(){
-            $ac_title = $_REQUEST['ac_title'];
-            $ac_detail = $_REQUEST['ac_title'];
+            $ac_title = $_REQUEST['title'];
+            $ac_detail = $_REQUEST['ac_detail'];
             $ac_file = $_FILES['ac_file'];
             $user_id = $_REQUEST['user_id'];
             $file_type=$_FILES['ac_file']['type'];  
@@ -118,14 +119,56 @@
                     $sqladd = $this->db->prepare("
                     INSERT INTO tb_activty VALUES('$acid','$ac_title','$ac_detail',CURRENT_TIMESTAMP(),'$pathfile','$user_id')
                     ");
-
-
+                   if($sqladd->execute(array()) === true ){
+                    $array=[
+                        "message"=>"success",
+                        "data"=>$acid
+                    ];
+                    echo json_encode($array,JSON_PRETTY_PRINT);
+                   }else{
+                    echo json_encode('error',JSON_PRETTY_PRINT);
+                   }
             }else{
                 echo json_encode("รองรับไฟล์เอกสารเฉพาะ pdf เท่านั้น",JSON_PRETTY_PRINT);
-            }
-
-
+                }
+                }
+                }        
+function AddImgNews(){
+    $ac_id = $_REQUEST['ac_id'];
+    $image = $_FILES['img'];
+    $file_type=$_FILES['img']['type'];  
+    $path2save = 'public/uploadimg/imgactiv/';
+    if (!file_exists($path2save)) {
+        mkdir("public/uploadfileac/imgactiv/", 0777);
+} 
+if( $file_type === "image/png" || $file_type === "image/jpg" || $file_type === "image/jpeg"){
+    $files_upload = basename($_FILES["ac_file"]["name"]);
+    $imageFileType = strtolower(pathinfo($files_upload,PATHINFO_EXTENSION));
+    if(move_uploaded_file($_FILES["img"]["tmp_name"], $path2save."$ac_id.".$imageFileType)){
+        $pathfile = strval($path2save."$ac_id.".$imageFileType);
+        $sqlchkid = $this->db->prepare("
+        SELECT COUNT(*) AS TT FROM tb_activty_img
+        ");
+        $sqlchkid->execute(array());
+        $data = $sqlchkid->fetchAll(PDO::FETCH_ASSOC);
+        $id = $data[0]['TT'];
+        if(intval($id) <= 0){
+            $imid = 1;
+        }else{
+            $imid = intval($id)+1;
         }
-}            
-                     
+        $sqlad = $this->db->prepare("
+        INSERT INTO tb_activty_img VALUES('$imid','$ac_id',$pathfile)
+        ");
+        $sqlad->execute(array());
+        echo json_encode("success",JSON_PRETTY_PRINT);
+    }
+
+}else{
+    echo json_encode("errorfile",JSON_PRETTY_PRINT);
+}
+
+
+}
+}                  
 ?>
