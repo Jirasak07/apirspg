@@ -49,5 +49,8 @@
         function ShowImage(){
             $this->model->ShowImage();
         }
+        function ShowImagePdf(){
+            $this->model->ShowImagePdf();
+        }
 	}
 ?>
