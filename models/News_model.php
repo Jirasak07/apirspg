@@ -200,7 +200,7 @@ SELECT COUNT(*) AS TT FROM tb_activty_img
     public function getActivity()
     {
         $sql = $this->db->prepare("
-        SELECT *,name,(SELECT  img_path FROM tb_activty_img WHERE ac_id = A.ac_id ORDER BY ac_img_id DESC LIMIT 1 ) AS pic FROM tb_activty AS A LEFT JOIN tb_user AS B ON A.user_id = B.user_id 
+        SELECT *,name,(SELECT  img_path FROM tb_activty_img WHERE ac_id = A.ac_id ORDER BY ac_img_id DESC LIMIT 1 ) AS pic FROM tb_activty AS A LEFT JOIN tb_user AS B ON A.user_id = B.user_id  ORDER BY ac_id DESC
         ");
         $sql->execute(array());
         $data = $sql->fetchAll(PDO::FETCH_ASSOC);
