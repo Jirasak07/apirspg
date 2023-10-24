@@ -63,4 +63,8 @@ class News extends Controller
     {
         $this->model->DetailActiv();
     }
+    public function EditActive()
+    {
+        $this->model->EditActive();
+    }
 }
