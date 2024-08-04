@@ -1,56 +1,73 @@
 <?php
-	class Plant extends Controller {
-	    function __construct(){
-	    		parent::__construct();
-			}
-			
-	    function index(){
-			$this->view->render('Plant/index');
-	    }
-        function getUser(){
-            $this->model->getUser();
-        }
-        function SelectProvince(){
-            $this->model->SelectProvince();
-        }
-        function SelectAmphur(){
-            $this->model->SelectAmphur();
-        }
-        function SelectTambon(){
-            $this->model->SelectTambon();
-        }
-        function ZipCode(){
-            $this->model->ZipCode();
-        }
-        function AddPlant(){
-            $this->model->AddPlant();
-        }
-        function uploadImage(){
-            $this->model->uploadImage();
-        }
-        function updateImage(){
-            $this->model->updateImage();
-        }
-        function getPlant(){
-            $this->model->getPlant();
-        }
-        function Search(){
-            $this->model->Search();
-        }
-        function detailPlant(){
-            $this->model->detailPlant();
-        }
-        function Print(){
-            $this->model->Print();
-        }
-        function PlantEdit(){
-            $this->model->PlantEdit();
-        }
-        function ShowImage(){
-            $this->model->ShowImage();
-        }
-        function ShowImagePdf(){
-            $this->model->ShowImagePdf();
-        }
-	}
-?>
+class Plant extends Controller
+{
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    public function index()
+    {
+        $this->view->render('Plant/index');
+    }
+    public function getUser()
+    {
+        $this->model->getUser();
+    }
+    public function SelectProvince()
+    {
+        $this->model->SelectProvince();
+    }
+    public function SelectAmphur()
+    {
+        $this->model->SelectAmphur();
+    }
+    public function SelectTambon()
+    {
+        $this->model->SelectTambon();
+    }
+    public function ZipCode()
+    {
+        $this->model->ZipCode();
+    }
+    public function AddPlant()
+    {
+        $this->model->AddPlant();
+    }
+    public function uploadImage()
+    {
+        $this->model->uploadImage();
+    }
+    public function updateImage()
+    {
+        $this->model->updateImage();
+    }
+    public function getPlant()
+    {
+        $this->model->getPlant();
+    }
+    public function Search()
+    {
+        $this->model->Search();
+    }
+    public function detailPlant()
+    {
+        $this->model->detailPlant();
+    }
+    public function print()
+    {
+        $this->model->Print();
+    }
+    public function PlantEdit()
+    {
+        $this->model->PlantEdit();
+    }
+    public function ShowImage()
+    {
+        $this->model->ShowImage();
+    }
+    public function ShowImagePdf()
+    {
+        $this->model->ShowImagePdf();
+    }
+}

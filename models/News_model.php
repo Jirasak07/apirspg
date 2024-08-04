@@ -1,6 +1,4 @@
 <?php
-header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Origin: http://localhost:3000");
 class News_model extends Model
 {
     public function __construct()
@@ -314,10 +312,11 @@ SELECT COUNT(*) AS TT FROM tb_activty_img
             $sql = $this->db->prepare("
             SELECT ac_file FROM tb_activty WHERE ac_id = '$ac_id'
             ");
-            if($sql->execute(array())){
+            if ($sql->execute(array())) {
 
-            }else{
-            echo json_encode($sql->errorInfo[2],JSON_PRETTY_PRINT);
+            } else {
+                $error = $sql->errorInfo();
+                echo json_encode($error[2], JSON_PRETTY_PRINT);
             }
             $da = $sql->fetchAll(PDO::FETCH_ASSOC);
             $path = $da[0]['ac_file'];

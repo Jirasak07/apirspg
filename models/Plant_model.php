@@ -1,6 +1,5 @@
 <?php
 header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Origin: http://localhost:3000");
 class Plant_model extends Model
 {
     public function __construct()
@@ -396,7 +395,8 @@ class Plant_model extends Model
         $data = $sql->fetchAll(PDO::FETCH_ASSOC);
         echo json_encode($data, JSON_PRETTY_PRINT);
     }
-    public function print() {
+    public function print()
+    {
         $id = $_GET['id'];
         $sql = $this->db->prepare("
         SELECT *,(SELECT name_th FROM provinces WHERE id = A.province) AS province,
