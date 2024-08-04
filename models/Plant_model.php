@@ -27,11 +27,8 @@ class Plant_model extends Model
     }
     public function SelectAmphur()
     {
-
-        $json = json_decode(file_get_contents("php://input"));
-        $pv_id = $json->pv_id;
         $sql = $this->db->prepare("
-            SELECT code AS AMPHUR_ID,name_th AS AMPHUR_NAME FROM amphures WHERE province_id = '$pv_id'
+            SELECT code AS AMPHUR_ID,name_th AS AMPHUR_NAME FROM amphures WHERE province_id = '62'
             ");
         $sql->execute(array());
         $data = $sql->fetchAll(PDO::FETCH_ASSOC);
