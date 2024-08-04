@@ -64,7 +64,7 @@ class User_model extends Model
             $stored_password = $row[0]['password'];
             // ทำการเปรียบเทียบรหัสผ่านที่ผู้ใช้ป้อนกับรหัสผ่านที่เก็บในฐานข้อมูล
             if (password_verify($password, $stored_password)) {
-                $token = GenarateToken($username);
+                $token = GenarateToken($username);  
                 $arr = [
                     "message" => "success",
                     "data" => $token,

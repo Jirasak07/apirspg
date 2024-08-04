@@ -19,7 +19,7 @@ class Plant_model extends Model
     public function SelectProvince()
     {
         $sql = $this->db->prepare("
-            SELECT id AS value,name_th AS label FROM provinces WHERE id = '49'
+            SELECT code AS value,name_th AS label FROM provinces WHERE code = '62'
             ");
         $sql->execute(array());
         $data = $sql->fetchAll(PDO::FETCH_ASSOC);
@@ -31,7 +31,7 @@ class Plant_model extends Model
         $json = json_decode(file_get_contents("php://input"));
         $pv_id = $json->pv_id;
         $sql = $this->db->prepare("
-            SELECT id AS AMPHUR_ID,name_th AS AMPHUR_NAME FROM amphures WHERE province_id = '$pv_id'
+            SELECT code AS AMPHUR_ID,name_th AS AMPHUR_NAME FROM amphures WHERE province_id = '$pv_id'
             ");
         $sql->execute(array());
         $data = $sql->fetchAll(PDO::FETCH_ASSOC);
@@ -73,7 +73,7 @@ class Plant_model extends Model
         $status = $json->status;
         $tambol = $json->tambon_id;
         $zipcode = $json->zipcode;
-        $province = '49';
+        $province = '62';
         $plant_character = $json->plant_character;
         $amphure = $json->amphur_id;
         $benefit_appliances = $json->benefit_appliances;
@@ -137,15 +137,36 @@ class Plant_model extends Model
                 user_id,
                 qty
                 )
-                values('$pid','$plant_name','$plant_id',
-                '$plant_character','$distinctive','$area',
-                '$locate_x','$locate_y','$tambol','$amphure',
-                '$province','$zipcode','$age','$girth','$height',
-                '$status','$benefit_foot','$benefit_medicine_human',
-                '$benefit_medicine_animal','$benefit_appliances',
-                '$benefit_pesticide','$about_tradition','$about_religion',
-                '$other','$name_adder','$age_adder','$address_adder',
-                '$createdAt','$user_id','$qty')
+                values(
+                '$pid',
+                '$plant_name',
+                '$plant_id',
+                '$plant_character',
+                '$distinctive',
+                '$area',
+                '$locate_x',
+                '$locate_y',
+                '$tambol',
+                '$amphure',
+                '$province',
+                '$zipcode',
+                '$age',
+                '$girth',
+                '$height',
+                '$status',
+                '$benefit_foot',
+                '$benefit_medicine_human',
+                '$benefit_medicine_animal',
+                '$benefit_appliances',
+                '$benefit_pesticide',
+                '$about_tradition',
+                '$about_religion',
+                '$other',
+                '$name_adder',
+                '$age_adder',
+                '$address_adder',
+                '$createdAt',
+                '$user_id','$qty')
             ");
 
         //  $data  = $sqladd->fetchAll(PDO::FETCH_ASSOC);
