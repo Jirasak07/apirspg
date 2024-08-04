@@ -28,7 +28,7 @@ class Plant_model extends Model
     public function SelectAmphur()
     {
         $sql = $this->db->prepare("
-            SELECT code AS AMPHUR_ID,name_th AS AMPHUR_NAME FROM amphures WHERE province_id = '62'
+            SELECT code AS value,name_th AS label FROM amphures WHERE province_id = '62'
             ");
         $sql->execute(array());
         $data = $sql->fetchAll(PDO::FETCH_ASSOC);
@@ -39,7 +39,7 @@ class Plant_model extends Model
         $json = json_decode(file_get_contents("php://input"));
         $amphur = $json->amphur;
         $sql = $this->db->prepare("
-            SELECT id AS DISTRICT_ID,name_th AS DISTRICT_NAME,zip_code  FROM districts AS A  WHERE amphure_id = '$amphur'
+            SELECT id AS value,name_th AS label  FROM districts AS A  WHERE amphure_id = '$amphur'
             ");
         $sql->execute(array());
         $data = $sql->fetchAll(PDO::FETCH_ASSOC);
