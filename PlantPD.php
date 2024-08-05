@@ -9,8 +9,10 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     // ให้รับมือกับสถานการณ์นี้อย่างเหมาะสม
     $id = 0;
 }
-$api_url = 'https://rspg-kpppao.com/backend/Plant/Print/?id=' . $id;
-$api_url2 = 'https://rspg-kpppao.com/backend/Plant/ShowImagePdf/?id=' . $id;
+// $api_url = 'https://rspg-kpppao.com/backend/Plant/Print/?id=' . $id;
+// $api_url2 = 'https://rspg-kpppao.com/backend/Plant/ShowImagePdf/?id=' . $id;
+$api_url = 'http://localhost:8080/apirspg/Plant/Print/?id=' . $id;
+$api_url2 = 'http://localhost:8080/apirspg/Plant/ShowImagePdf/?id=' . $id;
 $response = file_get_contents($api_url);
 $data = json_decode($response, true); // แปลง JSON เป็น array
 $response2 = file_get_contents($api_url2);
@@ -72,14 +74,14 @@ $sub = mb_substr($data[0]['area'], 0, 75, 'utf-8');
 $mpdf->WriteCell(20, 0, $sub, 0, 0, 'L');
 $mpdf->Ln(7);
 $mpdf->SetX(100);
-$mpdf->WriteCell(20, 0, $data[0]['lacate_x'], 0, 0, 'L');
+$mpdf->WriteCell(20, 0, $data[0]['locate_x'], 0, 0, 'L');
 $mpdf->SetX(140);
 $mpdf->WriteCell(20, 0, $data[0]['locate_y'], 0, 0, 'L');
 $mpdf->Ln(7);
 $mpdf->SetX(60);
 $mpdf->WriteCell(20, 0, $data[0]['tumbol'], 0, 0, 'L');
 $mpdf->SetX(105);
-$mpdf->WriteCell(20, 0, $data[0]['amphur'], 0, 0, 'L');
+$mpdf->WriteCell(20, 0, $data[0]['amphure'], 0, 0, 'L');
 $mpdf->SetX(145);
 $mpdf->WriteCell(20, 0, $data[0]['province'], 0, 0, 'L');
 $mpdf->Ln(6);
@@ -97,14 +99,14 @@ $ageAsString = strval($age);
 $mpdf->WriteCell(20, 0, $ageAsString, 0, 0, 'L');
 $mpdf->Ln(6);
 $mpdf->SetX(60);
-$mpdf->WriteCell(20, 0, $data[0]['statuss'], 0, 0, 'L');
+$mpdf->WriteCell(20, 0, $data[0]['status'], 0, 0, 'L');
 $mpdf->SetX(170);
 $age = $data[0]['qty'];
 $ageAsString = strval($age);
 $mpdf->WriteCell(20, 0, $ageAsString, 0, 0, 'L');
 $mpdf->Ln(24);
 // $mpdf->WriteCell(20, 0, $data[0]['benefit_foot'], 0, 0, 'L');
-$distinctive = $data[0]['benefit_foot'];
+$distinctive = $data[0]['benefit_food'];
 if (mb_strlen($distinctive, 'utf-8') > 60) {
     $sub = mb_substr($distinctive, 0, 90, 'utf-8');
     $mpdf->SetX(37);
@@ -123,7 +125,7 @@ if (mb_strlen($distinctive, 'utf-8') > 60) {
     }
 } else {
     $mpdf->SetX(37);
-    $mpdf->WriteCell(20, 0, $data[0]['benefit_foot'], 0, 0, 'L');
+    $mpdf->WriteCell(20, 0, $data[0]['benefit_food'], 0, 0, 'L');
 }
 // $mpdf->Ln(13);
 $mpdf->SetY(179);
@@ -297,13 +299,10 @@ $html = "<div style='position:fixed; top:8.9cm; left:4.5cm;color:#3f37c9;'>" . $
 $mpdf->WriteHTML($html);
 // $mpdf->WriteCell(20, 0, $data[0]['name_adder'], 0, 0, 'L');
 // $mpdf->SetX(170);
-$age = $data[0]['age_adder'];
-$html = "<div style='position:fixed; top:8.9cm; left:15cm;width:3cm;color:#3f37c9;'>" . intval($age) . "</div>";
 $mpdf->WriteHTML($html);
 // $ageAsString = strval($age);
 // $mpdf->WriteCell(20, 0, $ageAsString , 0, 0, 'L');
 $mpdf->SetY(111.5);
-$distinctive = $data[0]['address_adder'];
 if (mb_strlen($distinctive, 'utf-8') > 60) {
     $sub = mb_substr($distinctive, 0, 90, 'utf-8');
     $mpdf->SetX(37);
@@ -316,34 +315,40 @@ if (mb_strlen($distinctive, 'utf-8') > 60) {
     }
 } else {
     $mpdf->SetX(37);
-    $mpdf->WriteCell(20, 0, $data[0]['address_adder'], 0, 0, 'L');
 }
 
 $mpdf->AddPage();
+
 $pagecount3 = $mpdf->setSourceFile('as-4.pdf');
 $tplId3 = $mpdf->importPage($pagecount3);
 $mpdf->useTemplate($tplId3);
-$html = '
-<div style="height:20cm; width:16cm;position:fixed; top:2cm; left:1cm; display:flex; flex-direction:column; align-items:center; " >
-';
 
-if (!empty($data2[0]['image_name'])) {
-    $html .= '<div style="text-align: center;margin-top:0.8cm;height:6cm;overflow:hidden;" ><img  width="6cm" src="https://rspg-kpppao.com/backend/' . $data2[0]['image_name'] . '" /></div>';
+$columns = 2; // จำนวนคอลัมน์
+$rows = ceil(count($data2) / $columns); // คำนวณจำนวนแถว
+
+$imageWidth = 50; // ความกว้างของภาพ
+$imageHeight = 50; // ความสูงของภาพ
+$marginX = 10; // ระยะห่างแนวนอนระหว่างภาพ
+$marginY = 20; // ระยะห่างแนวตั้งระหว่างภาพและ label
+
+$pageWidth = $mpdf->w - $mpdf->lMargin - $mpdf->rMargin; // ความกว้างของหน้า PDF
+$pageHeight = $mpdf->h - $mpdf->tMargin - $mpdf->bMargin; // ความสูงของหน้า PDF
+
+$totalGridWidth = ($columns * $imageWidth) + (($columns - 1) * $marginX);
+$totalGridHeight = ($rows * $imageHeight) + (($rows - 1) * $marginY) + ($rows * 10); // เพิ่มความสูงของ label ด้วย
+
+$startX = ($pageWidth - $totalGridWidth) / 2 + $mpdf->lMargin;
+$startY = ($pageHeight - $totalGridHeight) / 2 + $mpdf->tMargin;
+
+foreach ($data2 as $index => $d) {
+    $col = $index % $columns; // คำนวณตำแหน่งคอลัมน์
+    $row = floor($index / $columns); // คำนวณตำแหน่งแถว
+    
+    $posX = $startX + ($col * ($imageWidth + $marginX)); // คำนวณตำแหน่งแนวนอนของภาพ
+    $posY = $startY + ($row * ($imageHeight + $marginY + 10)); // คำนวณตำแหน่งแนวตั้งของภาพ
+    
+    $mpdf->Image($d["image_name"], $posX, $posY, $imageWidth, $imageHeight, 'PNG');
+    $mpdf->SetXY($posX, $posY + $imageHeight + 2); // ตั้งตำแหน่งของ label
+    $mpdf->Cell($imageWidth, 10, $d["type_img"], 0, 0, 'C'); // เพิ่ม label ใต้ภาพ
 }
-
-if (!empty($data2[1]['image_name'])) {
-    $html .= '<div style="text-align: center;margin-top:0.8cm;height:6cm;overflow:hidden;" ><img width="6cm" src="https://rspg-kpppao.com/backend/' . $data2[1]['image_name'] . '" /></div>';
-}
-
-if (!empty($data2[2]['image_name'])) {
-    $html .= '<div style="text-align: center;margin-top:0.8cm;height:6cm;overflow:hidden;" ><img width="6cm" src="https://rspg-kpppao.com/backend/' . $data2[2]['image_name'] . '" /></div>';
-}
-
-if (!empty($data2[3]['image_name'])) {
-    $html .= '<div style="text-align: center;margin-top:0.8cm;height:6cm;overflow:hidden;" ><img width="6cm" src="https://rspg-kpppao.com/backend/' . $data2[3]['image_name'] . '" /></div>';
-}
-
-$html .= '</div>';
-$mpdf->WriteHTML($html);
-
 $mpdf->Output();

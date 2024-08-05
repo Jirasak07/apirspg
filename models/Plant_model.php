@@ -479,7 +479,14 @@ class Plant_model extends Model
     {
         $id = $_GET['id'];
         $sql = $this->db->prepare("
-        SELECT * FROM tb_plant_img WHERE plant_id = '$id'
+        SELECT *,
+         CASE
+        WHEN type_img = 'flower' THEN 'ภาพดอก'
+        WHEN type_img = 'leaf' THEN 'ภาพใบ'
+        WHEN type_img = 'fruit' THEN 'ภาพผล'
+        WHEN type_img = 'thrunk' THEN 'ภาพลำต้น'
+        END AS type_img
+        FROM tb_plant_img WHERE plant_id = '$id'
         ");
         $sql->execute(array());
         $data = $sql->fetchAll(PDO::FETCH_ASSOC);
