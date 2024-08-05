@@ -186,9 +186,6 @@ class Plant_model extends Model
         $name = $_REQUEST['name'];
         $plantid = $_REQUEST['plant_id'];
         $user_id = $_REQUEST['user_id'];
-        // $file_name = $_FILES['file']['name'];
-        // $file_size =$_FILES['file']['size'];
-        // $file_tmp =$_FILES['file']['tmp_name'];
         $file_type = $_FILES['file']['type'];
         $currentTime = new DateTime();
         $createdAt = $currentTime->format('Y-m-d H:i:s');
