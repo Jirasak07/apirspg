@@ -312,11 +312,32 @@ class Plant_model extends Model
     public function getPlants()
     {
         $json = json_decode(file_get_contents("php://input"));
+        $amphure = $json->amphure;
+        $tumbol = $json->tumbol;
+        $search = $json->search;
+        if ($search !== "") {
+            $cons = "
+            AND (plant_name LIKE '%$search%' OR plant_code LIKE '%$search%')";
+        } else {
+            $cons = "";
+        }
+        if ($tumbol !== "all") {
+            $cont = "
+            AND tumbol = '$tumbol'";
+        } else {
+            $cont = "";
+        }
+        if ($amphure !== "all") {
+            $cona = "
+            AND amphure = '$amphure'";
+        } else {
+            $cona = "";
+        }
         $sql = $this->db->prepare("
         SELECT *,(SELECT C.image_name FROM tb_plant_img AS C WHERE C.plant_id = A.plant_id ORDER BY C.img_id ASC LIMIT 1) AS img,
          (SELECT name_th FROM amphures WHERE code = A.amphure) AS amphure,
         (SELECT name_th FROM districts WHERE id = A.tumbol) AS tumbol
-        FROM `tb_plant` AS A
+        FROM `tb_plant` AS A WHERE plant_id IS NOT NULL  $cons $cona $cont
         ");
         $sql->execute(array());
         $data = $sql->fetchAll(PDO::FETCH_ASSOC);
