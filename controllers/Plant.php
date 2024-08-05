@@ -70,4 +70,8 @@ class Plant extends Controller
     {
         $this->model->ShowImagePdf();
     }
+    public function upload()
+    {
+        $this->model->upload();
+    }
 }
