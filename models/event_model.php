@@ -1,6 +1,6 @@
 <?php
 header("Content-Type: application/json; charset=UTF-8");
-class event_Model extends Model
+class Event_Model extends Model
 {
     public function __construct()
     {

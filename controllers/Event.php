@@ -1,5 +1,5 @@
 <?php
-class event extends Controller
+class Event extends Controller
 {
     public function __construct()
     {
