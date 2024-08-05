@@ -11,8 +11,10 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
 }
 // $api_url = 'https://rspg-kpppao.com/backend/Plant/Print/?id=' . $id;
 // $api_url2 = 'https://rspg-kpppao.com/backend/Plant/ShowImagePdf/?id=' . $id;
-$api_url = 'http://localhost:8080/apirspg/Plant/Print/?id=' . $id;
-$api_url2 = 'http://localhost:8080/apirspg/Plant/ShowImagePdf/?id=' . $id;
+// $api_url = 'http://localhost:8080/apirspg/Plant/Print/?id=' . $id;
+// $api_url2 = 'http://localhost:8080/apirspg/Plant/ShowImagePdf/?id=' . $id;
+$api_url = 'https://www.rspg-kpppao.com/apirspg/Plant/Print/?id=' . $id;
+$api_url2 = 'https://www.rspg-kpppao.com/apirspg/Plant/ShowImagePdf/?id=' . $id;
 $response = file_get_contents($api_url);
 $data = json_decode($response, true); // แปลง JSON เป็น array
 $response2 = file_get_contents($api_url2);
