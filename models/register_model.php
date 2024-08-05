@@ -66,7 +66,7 @@ class Register_model extends Model
 
         try {
             $stmt->execute();
-            $this->sendVerificationEmail($email, $token);
+            // $this->sendVerificationEmail($email, $token);
             echo json_encode(['message' => 'Verification email sent']);
         } catch (PDOException $e) {
             echo json_encode(['message' => 'Error registering user: ' . $e->getMessage()]);

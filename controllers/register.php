@@ -1,5 +1,5 @@
 <?php
-class Register extends Controller
+class register extends Controller
 {
     function __construct()
     {
