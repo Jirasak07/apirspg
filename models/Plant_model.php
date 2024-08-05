@@ -299,7 +299,6 @@ class Plant_model extends Model
             echo json_encode("error file type", JSON_PRETTY_PRINT);
         }
     }
-    //         $imageFileType = strtolower(pathinfo($files_upload, PATHINFO_EXTENSION));
     public function getPlant()
     {
         $json = json_decode(file_get_contents("php://input"));
