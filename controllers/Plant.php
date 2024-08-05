@@ -54,6 +54,14 @@ class Plant extends Controller
     {
         $this->model->detailPlant();
     }
+    public function detailPlants()
+    {
+        $this->model->detailPlants();
+    }
+    public function GetPlants()
+    {
+        $this->model->GetPlants();
+    }
     public function print()
     {
         $this->model->Print();
@@ -73,5 +81,13 @@ class Plant extends Controller
     public function upload()
     {
         $this->model->upload();
+    }
+    public function uploads()
+    {
+        $this->model->uploads();
+    }
+    public function GetPlantLocate()
+    {
+        $this->model->GetPlantLocate();
     }
 }

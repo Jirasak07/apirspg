@@ -299,86 +299,25 @@ class Plant_model extends Model
             echo json_encode("error file type", JSON_PRETTY_PRINT);
         }
     }
-    // public function uploadOtherImage()
-    // {
-    //     $name = $_REQUEST['name'];
-    //     $plantid = $_REQUEST['plant_id'];
-    //     $user_id = $_REQUEST['user_id'];
-    //     // $file_name = $_FILES['file']['name'];
-    //     // $file_size =$_FILES['file']['size'];
-    //     // $file_tmp =$_FILES['file']['tmp_name'];
-    //     $file_type = $_FILES['file']['type'];
-    //     $currentTime = new DateTime();
-    //     $createdAt = $currentTime->format('Y-m-d H:i:s');
-    //     $filename = "public/uploadimg/";
-    //     if (!file_exists($filename)) {
-    //         mkdir("public/uploadimg/", 0777);
-    //     }
-    //     if ($file_type === "image/png" || $file_type === "image/jpg" || $file_type === "image/jpeg") {
-    //         $files_upload = basename($_FILES["file"]["name"]);
     //         $imageFileType = strtolower(pathinfo($files_upload, PATHINFO_EXTENSION));
-    //         $delete = $filename . "/$name.png";
-    //         $delete1 = $filename . "/$name.jpeg";
-    //         $delete2 = $filename . "/$name.jpg";
-    //         if (file_exists($delete)) {
-    //             unlink($delete);
-    //         }
-    //         if (file_exists($delete1)) {
-    //             unlink($delete1);
-    //         }
-    //         if (file_exists($delete2)) {
-    //             unlink($delete2);
-    //         }
-    //         if (move_uploaded_file($_FILES["file"]["tmp_name"], $filename . "$name." . $imageFileType)) {
-    //             $img = strval($filename . "$name." . $imageFileType);
-    //             // $imgc = strval($filename . "$name");
-    //             $sqll = $this->db->prepare("
-    //             SELECT COUNT(*) AS t FROM tb_plant_img WHERE image_name LIKE '%$name%'
-    //             ");
-    //             $sqll->execute(array());
-    //             $total = $sqll->fetchAll(PDO::FETCH_ASSOC);
-    //             $total = $total[0]['t'];
-    //             if (intval($total) !== 0) {
-    //                 $sqld = $this->db->prepare("
-    //                 UPDATE tb_plnant_img SET user_id = '$user_id',image_date = CURRENT_TIMESTAMP() WHERE image_name = '$img'
-    //                 ");
-    //                 if ($sqld->execute(array())) {
-    //                     echo json_encode("success", JSON_PRETTY_PRINT);
-    //                 } else {
-    //                     echo json_encode("error", JSON_PRETTY_PRINT);
-    //                 }
-    //             } else {
-    //                 $sqlmaxid = $this->db->prepare("
-    //                 SELECT COUNT(*) total FROM tb_plant_img
-    //                 ");
-    //                 $sqlmaxid->execute(array());
-    //                 $total = $sqlmaxid->fetchAll(PDO::FETCH_ASSOC);
-    //                 $total = $total[0]['total'];
-    //                 $mid = 0;
-    //                 if (intval($total) <= 0) {
-    //                     $mid = 1;
-    //                 } else {
-    //                     $mid = intval($total) + 1;
-    //                 }
-    //                 $sqlimg = $this->db->prepare("
-    //                 INSERT INTO tb_plant_img VALUES('$mid','$img','$plantid','$user_id',CURRENT_TIMESTAMP())
-    //                 ");
-    //                 if ($sqlimg->execute(array())) {
-    //                     echo json_encode("success", JSON_PRETTY_PRINT);
-    //                 } else {
-    //                     echo json_encode("error", JSON_PRETTY_PRINT);
-    //                 }
-    //             }
-    //         }
-    //     } else {
-    //         echo json_encode("error file type", JSON_PRETTY_PRINT);
-    //     }
-    // }
     public function getPlant()
     {
         $json = json_decode(file_get_contents("php://input"));
         $sql = $this->db->prepare("
-        SELECT *,(SELECT C.image_name FROM tb_plant_img AS C WHERE C.plant_id = A.plant_id ORDER BY C.img_id DESC LIMIT 1) AS img FROM `tb_plant` AS A
+        SELECT *,(SELECT C.image_name FROM tb_plant_img AS C WHERE C.plant_id = A.plant_id ORDER BY C.img_id ASC LIMIT 1) AS img FROM `tb_plant` AS A
+        ");
+        $sql->execute(array());
+        $data = $sql->fetchAll(PDO::FETCH_ASSOC);
+        echo json_encode($data, JSON_PRETTY_PRINT);
+    }
+    public function getPlants()
+    {
+        $json = json_decode(file_get_contents("php://input"));
+        $sql = $this->db->prepare("
+        SELECT *,(SELECT C.image_name FROM tb_plant_img AS C WHERE C.plant_id = A.plant_id ORDER BY C.img_id ASC LIMIT 1) AS img,
+         (SELECT name_th FROM amphures WHERE code = A.amphure) AS amphure,
+        (SELECT name_th FROM districts WHERE id = A.tumbol) AS tumbol
+        FROM `tb_plant` AS A
         ");
         $sql->execute(array());
         $data = $sql->fetchAll(PDO::FETCH_ASSOC);
@@ -387,12 +326,22 @@ class Plant_model extends Model
     public function detailPlant()
     {
         $json = json_decode(file_get_contents("php://input"));
-        $id = $json->id;
+        $plant_id = $json->plant_id;
         $sql = $this->db->prepare("
-        SELECT *,(SELECT name_th FROM provinces WHERE id = A.province) AS province,
-        (SELECT name_th FROM amphures WHERE id = A.amphure) AS amphur,
+        SELECT * FROM `tb_plant` AS A WHERE plant_id = '$plant_id'
+        ");
+        $sql->execute(array());
+        $data = $sql->fetchAll(PDO::FETCH_ASSOC);
+        echo json_encode($data, JSON_PRETTY_PRINT);
+    }
+    public function detailPlants()
+    {
+        $json = json_decode(file_get_contents("php://input"));
+        $plant_id = $json->plant_id;
+        $sql = $this->db->prepare("
+        SELECT *, (SELECT name_th FROM amphures WHERE code = A.amphure) AS amphure,
         (SELECT name_th FROM districts WHERE id = A.tumbol) AS tumbol,
-        (SELECT C.image_name FROM tb_plant_img AS C WHERE C.plant_id = A.plant_id ORDER BY C.img_id DESC LIMIT 1) AS img,(SELECT name FROM tb_user WHERE user_id = A.user_id) AS useredit FROM `tb_plant` AS A WHERE plant_id = '$id';
+        (SELECT name_th FROM provinces WHERE code = A.province) AS province FROM `tb_plant` AS A WHERE plant_id = '$plant_id'
         ");
         $sql->execute(array());
         $data = $sql->fetchAll(PDO::FETCH_ASSOC);
@@ -432,42 +381,61 @@ class Plant_model extends Model
     {
         $json = json_decode(file_get_contents("php://input"));
         $plant_id = $json->plant_id;
-        $plant_name = $json->plant_name;
         $plant_code = $json->plant_code;
-        $plant_character = $json->plant_character;
-        $distinctive = $json->distinctive;
+        $plant_name = $json->plant_name;
         $area = $json->area;
-        $lacate_x = $json->lacate_x;
+        $locate_x = $json->locate_x;
         $locate_y = $json->locate_y;
-        // $tumbol = $json->tumbol;
-        // $amphure = $json->amphure;
-        // $province = $json->province;
-        $age = $json->age;
+        $distinctive = $json->distinctive;
+        $qty = $json->qty;
         $girth = $json->girth;
-        $height = $json->height;
-        $statuss = $json->statuss;
-        $benefit_foot = $json->benefit_foot;
-        $benefit_medicine_human = $json->benefit_medicine_human;
-        $benefit_medicine_animal = $json->benefit_medicine_animal;
+        $status = $json->status;
+        $tambol = $json->tambol;
+        $province = '62';
+        $plant_character = $json->plant_character;
+        $amphure = $json->amphure;
         $benefit_appliances = $json->benefit_appliances;
+        $benefit_food = $json->benefit_food;
+        $benefit_medicine_animal = $json->benefit_medicine_animal;
+        $benefit_medicine_human = $json->benefit_medicine_human;
         $benefit_pesticide = $json->benefit_pesticide;
+        $height = $json->height;
+        $name_adder = $json->name_adder;
+        $other = $json->other;
         $about_tradition = $json->about_tradition;
         $about_religion = $json->about_religion;
-        $other = $json->other;
-        $name_adder = $json->name_adder;
-        $age_adder = $json->age_adder;
-        $address_adder = $json->address_adder;
+        $age = $json->age;
         $user_id = $json->user_id;
-        $qty = $json->qty;
         $currentTime = new DateTime();
         $createdAt = $currentTime->format('Y-m-d H:i:s');
         $sql = $this->db->prepare("
-        UPDATE tb_plant SET plant_name = '$plant_name',plant_code = '$plant_code',plant_character='$plant_character',
-        distinctive='$distinctive',area='$area',lacate_x='$lacate_x',locate_y='$locate_y',
-      age='$age',girth='$girth',height='$height',statuss='$statuss',benefit_foot='$benefit_foot',
-        benefit_medicine_human='$benefit_medicine_human',benefit_medicine_animal='$benefit_medicine_animal',benefit_appliances='$benefit_appliances',
-        benefit_pesticide='$benefit_pesticide',about_tradition='$about_tradition',about_religion='$about_religion',other='$other',name_adder='$name_adder',
-        age_adder='$age_adder',address_adder='$address_adder',date_add='$createdAt',user_id='$user_id',qty='$qty' WHERE plant_id = '$plant_id'
+        UPDATE tb_plant 
+        SET plant_name = '$plant_name',
+        plant_code = '$plant_code',
+        plant_character='$plant_character',
+        distinctive='$distinctive',
+        area='$area',
+        locate_x='$locate_x',
+        locate_y='$locate_y',
+        age='$age',
+        girth='$girth',
+        height='$height',
+        status='$status',
+        amphure = '$amphure',
+        tumbol = '$tambol',
+        benefit_food='$benefit_food',
+        benefit_medicine_human='$benefit_medicine_human',
+        benefit_medicine_animal='$benefit_medicine_animal',
+        benefit_appliances='$benefit_appliances',
+        benefit_pesticide='$benefit_pesticide',
+        about_tradition='$about_tradition',
+        about_religion='$about_religion',
+        other='$other',
+        name_adder='$name_adder',
+        date_add='$createdAt',
+        user_id='$user_id',
+        qty='$qty' 
+        WHERE plant_id = '$plant_id'
         ");
         $sql->execute(array());
         if ($sql->execute()) {
@@ -550,5 +518,96 @@ class Plant_model extends Model
         } else {
             echo json_encode(['status' => 'error', 'message' => 'No file uploaded.']);
         }
+    }
+    public function uploads()
+    {
+        $type_img = $_POST["type_img"];
+        $id = $_POST["plant_id"];
+        $imgold = $_POST["image_name"];
+        $user = $_POST["user"];
+        $uploadDir = 'public/uploads/plant/plant' . $id . '/';
+        if (!file_exists($uploadDir)) {
+            if (!mkdir($uploadDir, 0777, true)) {
+                echo json_encode(['status' => 'error', 'message' => 'Failed to create upload directory.']);
+                exit;
+            }
+        }
+        // เช็คว่ามีไฟล์ที่อัพโหลดมาหรือไม่
+        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file'])) {
+            $file = $_FILES['file'];
+            // $fileName = basename($file['name']);
+            $originalFileName = basename($file['name']);
+            // $targetFilePath = $uploadDir . $fileName;
+            // สร้างชื่อไฟล์ใหม่
+            $newFileName = uniqid() . '_' . $originalFileName;
+            $targetFilePath = $uploadDir . $newFileName;
+            // ตรวจสอบการอัพโหลดไฟล์
+            if ($file['error'] !== UPLOAD_ERR_OK) {
+                echo json_encode(['status' => 'error', 'message' => 'File upload error: ' . $file['error']]);
+                exit;
+            }
+            // เช็คว่าไฟล์ถูกย้ายไปยังโฟลเดอร์ uploads สำเร็จหรือไม่
+            if (move_uploaded_file($file['tmp_name'], $targetFilePath)) {
+                // Return path ของไฟล์
+                $filePath = 'public/uploads/plant/plant' . $id . '/' . $newFileName;
+                $sqlinset = $this->db->prepare("
+                UPDATE tb_plant_img SET image_name = '$filePath',user_id = '$user' WHERE type_img = '$type_img' and plant_id = '$id'
+                ");
+                $sqlinset->execute();
+                $paths = $imgold;
+                if (file_exists($paths)) {
+                    if (unlink($paths)) {
+                    }
+                }
+                echo json_encode(['path' => $filePath], JSON_PRETTY_PRINT);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Failed to move uploaded file.']);
+            }
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'No file uploaded.']);
+        }
+    }
+    public function GetPlantLocate()
+    {
+        $json = json_decode(file_get_contents("php://input"));
+        $API = $json->API;
+        $conn = new Database;
+        $sql = $conn->prepare("
+			SELECT * FROM tb_plant  WHERE locate_x <> '-' AND locate_x IS NOT NULL 
+			");
+        $sql->execute(array());
+        $data = $sql->fetchAll(PDO::FETCH_ASSOC);
+        $use = array();
+        $i = 0;
+        foreach ($data as $d) {
+            $sqlimg = $this->db->prepare("
+            SELECT image_name FROM tb_plant_img WHERE plant_id = '" . $d["plant_id"] . "' LIMIT 1
+            ");
+            $sqlimg->execute(array());
+            $dataimg = $sqlimg->fetchAll(PDO::FETCH_ASSOC);
+            if (count($dataimg) > 0) {
+                $dataimg = $dataimg[0]["image_name"];
+                $use[$i] = [
+                    "id" => $i,
+                    "position" => [
+                        floatval($d["locate_x"]), floatval($d["locate_y"])
+                    ],
+                    "popup" => $d["plant_name"],
+                    "imageUrl" => $API . '/' . $dataimg
+                ];
+            } else {
+                $use[$i] = [
+                    "id" => $i,
+                    "position" => [
+                        floatval($d["locate_x"]), floatval($d["locate_y"])
+                    ],
+                    "popup" => $d["plant_name"],
+                    "imageUrl" => $API . '/public/images/logobtm.png'
+                ];
+            }
+
+            $i++;
+        }
+        echo json_encode($use, JSON_PRETTY_PRINT);
     }
 }
