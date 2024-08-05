@@ -1,5 +1,5 @@
 <?php
-class Plant extends Controller
+class plant extends Controller
 {
     public function __construct()
     {

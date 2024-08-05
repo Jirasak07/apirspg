@@ -1,6 +1,6 @@
 <?php
 header("Content-Type: application/json; charset=UTF-8");
-class News_Model extends Model
+class news_Model extends Model
 {
     public function __construct()
     {

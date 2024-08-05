@@ -1,5 +1,5 @@
 <?php
-class Plant_model extends Model
+class plant_model extends Model
 {
     public function __construct()
     {
