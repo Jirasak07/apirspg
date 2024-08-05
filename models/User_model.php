@@ -15,28 +15,17 @@ class User_model extends Model
         $organize = $json->organize;
         $tell = $json->tell;
         $citizen = $json->citizen;
+        $email = $json->email;
         $hashed_password = password_hash($password, PASSWORD_BCRYPT);
         $sqlchkusername = $this->db->prepare("
-            SELECT COUNT(*) AS row FROM tb_user WHERE username = '$username'
+            SELECT COUNT(*) AS row FROM tb_user WHERE username = '$username' OR citizen_id = '$citizen' OR email = '$email' 
              ");
         $sqlchkusername->execute(array());
         $datachk = $sqlchkusername->fetchAll(PDO::FETCH_ASSOC);
         $datachk = intval($datachk[0]['row']);
         if ($datachk === 0) {
-            $sql = $this->db->prepare("
-            SELECT MAX(user_id) AS total FROM tb_user
-            ");
-            $sql->execute(array());
-            $data = $sql->fetchAll(PDO::FETCH_ASSOC);
-            $id = 0;
-            $data = intval($data[0]['total']);
-            if ($data <= 0) {
-                $id = 1;
-            } else {
-                $id = $data + 1;
-            }
             $sqlAdd = $this->db->prepare("
-            INSERT INTO tb_user VALUES('$id','$username','$hashed_password','$name','$organize','2','$tell','$citizen','1')
+            INSERT INTO tb_user(email,username,password,name,organization,user_role,tell_number,citizen_id,status) VALUES('$email','$username','$hashed_password','$name','$organize','2','$tell','$citizen','1')
             ");
             if ($sqlAdd->execute()) {
                 echo json_encode("success", JSON_PRETTY_PRINT);
@@ -46,9 +35,6 @@ class User_model extends Model
         } else {
             echo json_encode("error", JSON_PRETTY_PRINT);
         }
-
-        // $token =  GenarateToken($data[0]['username']);
-        // echo json_encode($token,JSON_PRETTY_PRINT);
     }
     public function Login()
     {
@@ -56,7 +42,7 @@ class User_model extends Model
         $username = $json->username;
         $password = $json->password;
         $sql = $this->db->prepare("
-            SELECT * FROM tb_user WHERE username = '$username' AND status = '1'
+            SELECT * FROM tb_user WHERE username = '$username' AND status = '1' AND confirmed ='1'
             ");
         $sql->execute(array());
         $row = $sql->fetchAll(PDO::FETCH_ASSOC);
@@ -64,7 +50,7 @@ class User_model extends Model
             $stored_password = $row[0]['password'];
             // ทำการเปรียบเทียบรหัสผ่านที่ผู้ใช้ป้อนกับรหัสผ่านที่เก็บในฐานข้อมูล
             if (password_verify($password, $stored_password)) {
-                $token = GenarateToken($username);  
+                $token = GenarateToken($username);
                 $arr = [
                     "message" => "success",
                     "data" => $token,
@@ -87,12 +73,11 @@ class User_model extends Model
         $token = $json->token;
         $res = CheckToken($token);
         echo json_encode($res, JSON_PRETTY_PRINT);
-
     }
     public function getUser()
     {
         $sql = $this->db->prepare("
-            SELECT * FROM tb_user
+            SELECT * FROM tb_user WHERE  confirmed ='1'
             ");
         $sql->execute(array());
         $data = $sql->fetchAll(PDO::FETCH_ASSOC);
@@ -125,7 +110,7 @@ class User_model extends Model
         $json = json_decode(file_get_contents("php://input"));
         $id = $json->id;
         $sqls = $this->db->prepare("
-            SELECT * FROM tb_user  WHERE user_id = $id
+            SELECT * FROM tb_user  WHERE user_id = $id AND confirmed ='1'
             ");
         $sqls->execute(array());
         $data = $sqls->fetchAll(PDO::FETCH_ASSOC);
@@ -135,16 +120,37 @@ class User_model extends Model
     {
         $json = json_decode(file_get_contents("php://input"));
         $username = $json->username;
+        $email = $json->email;
         $name = $json->name;
-        $organize = $json->organize;
+        $organize = $json->organization;
         $tell_number = $json->tell_number;
-        $citizen = $json->citizen;
-        $id = $json->id;
+        $citizen = $json->citizen_id;
+        $user_id = $json->user_id;
+        $password = $json->password;
+
+
         $sql = $this->db->prepare("
-            UPDATE tb_user SET username = '$username',name = '$name',organization = '$organize',tell_number='$tell_number',citizen_id='$citizen' WHERE user_id = '$id'
-            ");
+        SELECT * FROM tb_user WHERE user_id = '$user_id' AND status = '1' AND confirmed ='1'
+        ");
         $sql->execute(array());
-        echo json_encode('success', JSON_PRETTY_PRINT);
+        $row = $sql->fetchAll(PDO::FETCH_ASSOC);
+        if (COUNT($row) === 1) {
+            $stored_password = $row[0]['password'];
+            // ทำการเปรียบเทียบรหัสผ่านที่ผู้ใช้ป้อนกับรหัสผ่านที่เก็บในฐานข้อมูล
+            if (password_verify($password, $stored_password)) {
+                $sql = $this->db->prepare("
+                UPDATE tb_user SET username = '$username',name = '$name',organization = '$organize',tell_number='$tell_number',citizen_id='$citizen',email='$email' WHERE user_id = '$user_id'
+                ");
+                $sql->execute(array());
+                echo json_encode('success', JSON_PRETTY_PRINT);
+            } else {
+                // รหัสผ่านไม่ถูกต้อง
+                echo json_encode("error", JSON_PRETTY_PRINT);
+            }
+        } else {
+            //ไม่พบผู้ใช้
+            echo json_encode("info", JSON_PRETTY_PRINT);
+        }
     }
 
     public function ChangePass()
@@ -167,7 +173,7 @@ class User_model extends Model
             if (password_verify($oldpass, $stored_password)) {
                 $hashed_password = password_hash($newpass, PASSWORD_BCRYPT);
                 $sql = $this->db->prepare("
-                UPDATE tb_user SET username = '$newname', password = '$hashed_password' WHERE user_id = '$id'
+                UPDATE tb_user SET username = '$newname', password = '$hashed_password' WHERE user_id = '$id' AND confirmed ='1'
                 ");
                 $sql->execute(array());
                 echo json_encode("success", JSON_PRETTY_PRINT);
@@ -178,42 +184,6 @@ class User_model extends Model
         } else {
             //ไม่พบผู้ใช้
             echo json_encode("info", JSON_PRETTY_PRINT);
-        }
-    }
-    public function AddActivity()
-    {
-        $activename = $_REQUEST['activename'];
-        $activedetail = $_REQUEST['activedetail'];
-        $user_id = $_REQUEST['user_id'];
-        $activefile = $_FILES['filee'];
-        $sqlcount = $this->db->prepare("
-            SELECT COUNT(*) mxid FROM tb_activty
-        ");
-        $sqlcount->execute(array());
-        $mxid = $sqlcount->fetchAll(PDO::FETCH_ASSOC);
-        $mxid = $mxid[0]['mxid'];
-        if (intval($mxid) === 0) {
-            $mxid = intval($mxid) + 1;
-        } else {
-            $mxid = intval($mxid) + 1;
-        }
-        $file_type = $_FILES['file']['type'];
-        $filename = "public/uploadfile/";
-        if (!file_exists($filename)) {
-            mkdir("public/uploadimgfile/", 0777);
-        }
-        $files_upload = basename($_FILES["file"]["name"]);
-        $imageFileType = strtolower(pathinfo($files_upload, PATHINFO_EXTENSION));
-        if (move_uploaded_file($_FILES["file"]["tmp_name"], $filename . "$activename." . $imageFileType)) {
-            $file = strval($filename . "$activename." . $imageFileType);
-            $sqlAddAc = $this->db->prepare("
-                INSERT INTO tb_activty VALUES('$mxid','$activename',' $activedetail',CURDATE(),'$file','$user_id')
-                ");
-            if ($sqlAddAc->execute(array())) {
-                echo json_encode("success", JSON_PRETTY_PRINT);
-            } else {
-                echo json_encode("error", JSON_PRETTY_PRINT);
-            }
         }
     }
 }

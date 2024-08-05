@@ -90,4 +90,36 @@ class Plant extends Controller
     {
         $this->model->GetPlantLocate();
     }
+    public function InsertBanner()
+    {
+        $this->model->InsertBanner();
+    }
+    public function uploadb()
+    {
+        $this->model->uploadb();
+    }
+    public function GetBanner()
+    {
+        $this->model->GetBanner();
+    }
+    public function GetBanners()
+    {
+        $this->model->GetBanners();
+    }
+    public function StatusBanner()
+    {
+        $this->model->StatusBanner();
+    }
+    public function DeleteBanner()
+    {
+        $this->model->DeleteBanner();
+    }
+    public function GetEditBanner()
+    {
+        $this->model->GetEditBanner();
+    }
+    public function SaveEditBanner()
+    {
+        $this->model->SaveEditBanner();
+    }
 }

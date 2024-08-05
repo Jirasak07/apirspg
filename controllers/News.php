@@ -1,70 +1,34 @@
 <?php
-class News extends Controller
+class news extends Controller
 {
     public function __construct()
     {
         parent::__construct();
     }
+    public function GetNews()
+    {
+        $this->model->GetNews();
+    }
+    public function GetEditNews()
+    {
+        $this->model->GetEditNews();
+    }
+    public function InsertNews()
+    {
+        $this->model->InsertNews();
+    }
+    public function upload()
+    {
+        $this->model->upload();
+    }
+    public function SaveEditNews()
+    {
+        $this->model->SaveEditNews();
 
-    public function index()
-    {
-        header("Content-Type: application/json; charset=UTF-8");
-        $arr = array(
-            'status' => 200,
-            'status_name' => header_status(200),
-            'data' => array(
-                'success' => "ไม่อนุญาตให้เข้าใช้งานส่วนใดของระบบ",
-            ),
-        );
-        echo json_encode($arr);
-        http_response_code(200);
     }
-    public function AddNews()
+    public function DeleteNews()
     {
-        $this->model->AddNews();
-    }
-    public function getNew()
-    {
-        $this->model->getNew();
-    }
-    public function getEditNews()
-    {
-        $this->model->getEditNews();
-    }
-    public function EditNews()
-    {
-        $this->model->EditNews();
-    }
-    public function getNewTable()
-    {
-        $this->model->getNewTable();
-    }
-    public function AddActiv()
-    {
-        $this->model->AddActiv();
-    }
-    public function AddImgNews()
-    {
-        $this->model->AddImgNews();
-    }
-    public function DeleteActiv()
-    {
-        $this->model->DeleteActiv();
-    }
-    public function getActivity()
-    {
-        $this->model->getActivity();
-    }
-    public function getImgActiv()
-    {
-        $this->model->getImgActiv();
-    }
-    public function DetailActiv()
-    {
-        $this->model->DetailActiv();
-    }
-    public function EditActive()
-    {
-        $this->model->EditActive();
+        $this->model->DeleteNews();
+
     }
 }

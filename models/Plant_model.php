@@ -637,4 +637,136 @@ class Plant_model extends Model
         }
         echo json_encode($use, JSON_PRETTY_PRINT);
     }
+
+    //////////////////////////////============== BANNER =====================//////////////
+    public function GetBanner()
+    {
+        $sql = $this->db->prepare("
+			SELECT * FROM tb_banner order by banner_id desc
+			");
+        $sql->execute(array());
+        $data = $sql->fetchAll(PDO::FETCH_ASSOC);
+        echo json_encode($data, JSON_PRETTY_PRINT);
+    }
+    public function GetBanners()
+    {
+        $sql = $this->db->prepare("
+			SELECT * FROM tb_banner WHERE BANNER_STATUS = 'T'  order by banner_id desc
+			");
+        $sql->execute(array());
+        $data = $sql->fetchAll(PDO::FETCH_ASSOC);
+        echo json_encode($data, JSON_PRETTY_PRINT);
+    }
+    public function GetEditBanner()
+    {
+        $json = json_decode(file_get_contents("php://input"));
+        $banner_id = $json->banner_id;
+        $sql = $this->db->prepare("
+			SELECT * FROM tb_banner WHERE banner_id = '$banner_id'
+			");
+        $sql->execute(array());
+        $data = $sql->fetchAll(PDO::FETCH_ASSOC);
+        echo json_encode($data, JSON_PRETTY_PRINT);
+    }
+    public function uploadb()
+    {
+        $uploadDir = 'public/uploads/banner/';
+        if (!file_exists($uploadDir)) {
+            if (!mkdir($uploadDir, 0777, true)) {
+                echo json_encode(['status' => 'error', 'message' => 'Failed to create upload directory.']);
+                exit;
+            }
+        }
+        // เช็คว่ามีไฟล์ที่อัพโหลดมาหรือไม่
+        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file'])) {
+            $file = $_FILES['file'];
+            // $fileName = basename($file['name']);
+            $originalFileName = basename($file['name']);
+            // $targetFilePath = $uploadDir . $fileName;
+            // สร้างชื่อไฟล์ใหม่
+            $newFileName = uniqid() . '_' . $originalFileName;
+            $targetFilePath = $uploadDir . $newFileName;
+            // ตรวจสอบการอัพโหลดไฟล์
+            if ($file['error'] !== UPLOAD_ERR_OK) {
+                echo json_encode(['status' => 'error', 'message' => 'File upload error: ' . $file['error']]);
+                exit;
+            }
+            // เช็คว่าไฟล์ถูกย้ายไปยังโฟลเดอร์ uploads สำเร็จหรือไม่
+            if (move_uploaded_file($file['tmp_name'], $targetFilePath)) {
+                // Return path ของไฟล์
+                $filePath = 'public/uploads/banner/' . $newFileName;
+                echo json_encode(['status' => 'success', 'path' => $filePath]);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Failed to move uploaded file.']);
+            }
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'No file uploaded.']);
+        }
+    }
+    public function InsertBanner()
+    {
+        $json = json_decode(file_get_contents("php://input"));
+        $banner_url = $json->banner_url;
+        $banner_img = $json->banner_img;
+        $sqlinsert = $this->db->prepare("
+        INSERT INTO tb_banner(banner_url,banner_status,banner_img)
+        VALUES('$banner_url','T','$banner_img')
+        ");
+        if ($sqlinsert->execute() === true) {
+            echo json_encode("success", JSON_PRETTY_PRINT);
+        } else {
+            echo json_encode("error", JSON_PRETTY_PRINT);
+        }
+    }
+    public function StatusBanner()
+    {
+        $json = json_decode(file_get_contents("php://input"));
+        $banner_status = $json->banner_status;
+        $banner_id = $json->banner_id;
+        $sqlinsert = $this->db->prepare("
+        UPDATE tb_banner SET banner_status = '$banner_status' WHERE banner_id = '$banner_id'
+        ");
+        if ($sqlinsert->execute() === true) {
+            echo json_encode("success", JSON_PRETTY_PRINT);
+        } else {
+            echo json_encode("error", JSON_PRETTY_PRINT);
+        }
+    }
+    public function DeleteBanner()
+    {
+        $json = json_decode(file_get_contents("php://input"));
+        $banner_id = $json->banner_id;
+        $sql = $this->db->prepare("
+        SELECT * FROM tb_banner WHERE banner_id = '$banner_id'
+        ");
+        $sql->execute(array());
+        $data = $sql->fetchAll(PDO::FETCH_ASSOC);
+        $path = $data[0]["banner_img"];
+        if (file_exists($path)) {
+            if (unlink($path)) {
+            }
+        }
+        $sqlinsert = $this->db->prepare("
+        DELETE FROM tb_banner WHERE banner_id = '$banner_id'
+        ");
+        if ($sqlinsert->execute() === true) {
+            echo json_encode("success", JSON_PRETTY_PRINT);
+        } else {
+            echo json_encode("error", JSON_PRETTY_PRINT);
+        }
+    }
+    function SaveEditBanner()
+    {
+        $json = json_decode(file_get_contents("php://input"));
+        $banner_id = $json->banner_id;
+        $banner_url = $json->banner_url;
+        $sqlupdate = $this->db->prepare("
+    UPDATE tb_banner SET banner_url = '$banner_url' WHERE banner_id = '$banner_id'
+    ");
+        if ($sqlupdate->execute() === true) {
+            echo json_encode("success", JSON_PRETTY_PRINT);
+        } else {
+            echo json_encode("error", JSON_PRETTY_PRINT);
+        }
+    }
 }
