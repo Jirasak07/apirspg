@@ -66,8 +66,8 @@ class Register_model extends Model
 
         try {
             $stmt->execute();
-            // $this->sendVerificationEmail($email, $token);
-            echo json_encode(['message' => 'Verification email sent']);
+            $this->sendVerificationEmail($email, $token);
+            // echo json_encode(['message' => 'Verification email sent']);
         } catch (PDOException $e) {
             echo json_encode(['message' => 'Error registering user: ' . $e->getMessage()]);
         }
@@ -78,7 +78,7 @@ class Register_model extends Model
         $mail = new PHPMailer(true);
         try {
             $mail->isSMTP();
-            $mail->Host       = 'mail.rspg-kpppao.com'; // Your SMTP server
+            $mail->Host       = 'rspg-kpppao.com'; // Your SMTP server
             $mail->SMTPAuth   = true;
             $mail->Username   = 'kamphaengphet.pao@rspg-kpppao.com';
             $mail->Password   = 'Merlin162990.';
