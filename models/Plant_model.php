@@ -98,11 +98,11 @@ class plant_model extends Model
                 tumbol,
                 amphure,
                 province,
-              
+
                 age,
                 girth,
                 height,
-                statuss,
+                status,
                 benefit_food,
                 benefit_medicine_human,
                 benefit_medicine_animal,
@@ -112,14 +112,14 @@ class plant_model extends Model
                 about_religion,
                 other,
                 name_adder,
-                age_adder,
-             
+
+
                 date_add,
                 user_id,
                 qty
                 )
                 values(
-  
+
                 '$plant_name',
                 '$plant_id',
                 '$plant_character',
@@ -130,7 +130,7 @@ class plant_model extends Model
                 '$tambol',
                 '$amphure',
                 '$province',
-              
+
                 '$age',
                 '$girth',
                 '$height',
@@ -144,7 +144,7 @@ class plant_model extends Model
                 '$about_religion',
                 '$other',
                 '$name_adder',
-                '$age_adder',
+
 
                 '$createdAt',
                 '$user_id','$qty')
@@ -153,7 +153,7 @@ class plant_model extends Model
         //  $data  = $sqladd->fetchAll(PDO::FETCH_ASSOC);
         if ($sqladd->execute(array())) {
             $ss = $this->db->prepare("
-            SELECT MAX(plant_id) as plant_id from tb_plant 
+            SELECT MAX(plant_id) as plant_id from tb_plant
             ");
             $ss->execute(array());
             $plant_ids = $ss->fetchAll(PDO::FETCH_ASSOC);
@@ -428,7 +428,7 @@ class plant_model extends Model
         $currentTime = new DateTime();
         $createdAt = $currentTime->format('Y-m-d H:i:s');
         $sql = $this->db->prepare("
-        UPDATE tb_plant 
+        UPDATE tb_plant
         SET plant_name = '$plant_name',
         plant_code = '$plant_code',
         plant_character='$plant_character',
@@ -453,7 +453,7 @@ class plant_model extends Model
         name_adder='$name_adder',
         date_add='$createdAt',
         user_id='$user_id',
-        qty='$qty' 
+        qty='$qty'
         WHERE plant_id = '$plant_id'
         ");
         $sql->execute(array());
@@ -528,7 +528,7 @@ class plant_model extends Model
                 `plant_id`,
                 `user_id`,
                 `image_date`,
-                `type_img`) 
+                `type_img`)
                 VALUES (
                 '$filePath',
                 '$id',
@@ -536,8 +536,14 @@ class plant_model extends Model
                 CURRENT_DATE(),
                 '$type')
                 ");
-                $sqlinset->execute();
-                echo json_encode("success", JSON_PRETTY_PRINT);
+                if ($sqlinset->execute() === true) {
+
+                    echo json_encode("success", JSON_PRETTY_PRINT);
+                } else {
+                    $error = $sqlinset->errorInfo();
+                    echo json_encode($error[2], JSON_PRETTY_PRINT);
+                }
+
             } else {
                 echo json_encode(['status' => 'error', 'message' => 'Failed to move uploaded file.']);
             }
@@ -549,7 +555,12 @@ class plant_model extends Model
     {
         $type_img = $_POST["type_img"];
         $id = $_POST["plant_id"];
-        $imgold = $_POST["image_name"];
+        if (isset($imgold)) {
+            $imgold = $_POST["image_name"];
+        } else {
+            $imgold = $_POST["image_name"];
+        }
+
         $user = $_POST["user"];
         $uploadDir = 'public/uploads/plant/plant' . $id . '/';
         if (!file_exists($uploadDir)) {
@@ -576,15 +587,46 @@ class plant_model extends Model
             if (move_uploaded_file($file['tmp_name'], $targetFilePath)) {
                 // Return path ของไฟล์
                 $filePath = 'public/uploads/plant/plant' . $id . '/' . $newFileName;
-                $sqlinset = $this->db->prepare("
+                $sqls = $this->db->prepare("select * from tb_plant_img where type_img = '$type_img' and plant_id = '$id'");
+                $sqls->execute(array());
+                $d = $sqls->fetchAll(PDO::FETCH_ASSOC);
+                if (count($d) > 0) {
+                    $sqlinset = $this->db->prepare("
                 UPDATE tb_plant_img SET image_name = '$filePath',user_id = '$user' WHERE type_img = '$type_img' and plant_id = '$id'
                 ");
-                $sqlinset->execute();
-                $paths = $imgold;
-                if (file_exists($paths)) {
-                    if (unlink($paths)) {
+                } else {
+                    $sqlinset = $this->db->prepare("
+                    INSERT INTO `tb_plant_img`
+                    (
+                    `image_name`,
+                    `plant_id`,
+                    `user_id`,
+                    `image_date`,
+                    `type_img`)
+                    VALUES (
+                    '$filePath',
+                    '$id',
+                    '$user',
+                    CURRENT_DATE(),
+                    '$type_img')
+                    ");
+                }
+
+                // $sqlinset->execute();
+                if ($sqlinset->execute() === true) {
+                    echo json_encode("success", JSON_PRETTY_PRINT);
+                } else {
+                    $error = $sqlinset->errorInfo();
+                    echo json_encode($error[2], JSON_PRETTY_PRINT);
+                }
+                if (isset($imgold)) {
+                    $paths = $imgold;
+                    if (file_exists($paths)) {
+                        if (unlink($paths)) {
+                        }
                     }
                 }
+
                 echo json_encode(['path' => $filePath], JSON_PRETTY_PRINT);
             } else {
                 echo json_encode(['status' => 'error', 'message' => 'Failed to move uploaded file.']);
@@ -599,7 +641,7 @@ class plant_model extends Model
         $API = $json->API;
         $conn = new Database;
         $sql = $conn->prepare("
-			SELECT * FROM tb_plant  WHERE locate_x <> '-' AND locate_x IS NOT NULL 
+			SELECT * FROM tb_plant  WHERE locate_x <> '-' AND locate_x IS NOT NULL
 			");
         $sql->execute(array());
         $data = $sql->fetchAll(PDO::FETCH_ASSOC);
@@ -616,19 +658,19 @@ class plant_model extends Model
                 $use[$i] = [
                     "id" => $i,
                     "position" => [
-                        floatval($d["locate_x"]), floatval($d["locate_y"])
+                        floatval($d["locate_x"]), floatval($d["locate_y"]),
                     ],
                     "popup" => $d["plant_name"],
-                    "imageUrl" => $API . '/' . $dataimg
+                    "imageUrl" => $API . '/' . $dataimg,
                 ];
             } else {
                 $use[$i] = [
                     "id" => $i,
                     "position" => [
-                        floatval($d["locate_x"]), floatval($d["locate_y"])
+                        floatval($d["locate_x"]), floatval($d["locate_y"]),
                     ],
                     "popup" => $d["plant_name"],
-                    "imageUrl" => $API . '/public/images/logobtm.png'
+                    "imageUrl" => $API . '/public/images/logobtm.png',
                 ];
             }
 
@@ -754,7 +796,7 @@ class plant_model extends Model
             echo json_encode("error", JSON_PRETTY_PRINT);
         }
     }
-    function SaveEditBanner()
+    public function SaveEditBanner()
     {
         $json = json_decode(file_get_contents("php://input"));
         $banner_id = $json->banner_id;
