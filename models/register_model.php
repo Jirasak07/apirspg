@@ -96,7 +96,7 @@ class Register_model extends Model
             // Content
             $mail->isHTML(true); // Set email format to HTML
             $mail->Subject = 'ยืนยันการสมัครสมาชิกระบบจัดเก็บพันธุกรรมพืช : องค์การบริหารส่วนจังหวัดกำแพงเพชร';
-            $mail->Body    = "Click on the link to verify your account: <a href='http://localhost/backend/verify.php?token=$token'>Verify Account</a>";
+            $mail->Body    = "Click on the link to verify your account: <a href='https://www.rspg-kpppao.com/apirspg/register/verify/$token'>Verify Account</a>";
             $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
 
             $mail->send();
@@ -104,6 +104,39 @@ class Register_model extends Model
         } catch (Exception $e) {
             echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
         }
+    }
+    function verify($token)
+    {
+        // if (isset($_GET['token'])) {
+        //     $token = $_GET['token'];
+
+            // Prepare the SQL statement to find the user with the provided token
+            $sql = "SELECT * FROM tb_user WHERE token = :token";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':token', $token);
+
+            try {
+                $stmt->execute();
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if ($user) {
+                    // User found, update the status to 'confirmed'
+                    $updateSql = "UPDATE tb_user SET confirmed = '1', token = NULL WHERE token = :token";
+                    $updateStmt = $this->db->prepare($updateSql);
+                    $updateStmt->bindParam(':token', $token);
+                    $updateStmt->execute();
+                    header("Location: https://www.rspg-kpppao.com/login");
+                    exit();
+                } else {
+                    // Token is invalid or expired
+                    echo "Invalid or expired token.";
+                }
+            } catch (PDOException $e) {
+                echo "Error: " . $e->getMessage();
+            }
+        // } else {
+        //     echo "No token provided.";
+        // }
     }
 }
 

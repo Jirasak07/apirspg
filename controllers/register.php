@@ -23,4 +23,8 @@ class register extends Controller
     {
         $this->model->register();
     }
+    public function verify($token)
+    {
+        $this->model->verify($token);
+    }
 }
