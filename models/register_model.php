@@ -1,10 +1,10 @@
 <?php
 header("Content-Type: application/json; charset=UTF-8");
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+// use PHPMailer\PHPMailer\PHPMailer;
+// use PHPMailer\PHPMailer\Exception;
 
-require 'vendor/autoload.php';
+// require 'vendor/autoload.php';
 
 class Register_model extends Model
 {
@@ -52,7 +52,7 @@ class Register_model extends Model
             :token,
             '0'
         )";
-        
+
         $stmt = $this->db->prepare($sql);
 
         $stmt->bindParam(':email', $email);
@@ -75,30 +75,44 @@ class Register_model extends Model
 
     private function sendVerificationEmail($email, $token)
     {
-        $mail = new PHPMailer(true);
         try {
+            // date_default_timezone_set('Asia/Bangkok');
+            // $alert_sentmail = null;
+            $mail = new PHPMailer(true);
             $mail->isSMTP();
-            $mail->Host       = 'rspg-kpppao.com'; // Your SMTP server
-            $mail->SMTPAuth   = true;
-            $mail->Username   = 'kamphaengphet.pao@rspg-kpppao.com';
-            $mail->Password   = 'Merlin162990.';
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; // Use SSL/TLS on port 465
-            $mail->Port       = 465;
-    
-            $mail->setFrom('kamphaengphet.pao@rspg-kpppao.com', 'JIRASAK');
-            $mail->addAddress($email);
-    
-            $mail->isHTML(true);
-            $mail->Subject = 'Account Verification';
+            $mail->SMTPDebug = 0;
+            $mail->Debugoutput = 'html';
+            $mail->CharSet = "utf-8";
+            // $mail->Host = "mail.rspg-kpppao.com";
+            $mail->Host = "s054ns1.hostinghispeed.com";
+            $mail->SMTPSecure = 'tls'; // Enable TLS encryption, `ssl` also accepted
+            $mail->Port = 587;
+            $mail->SMTPAuth = true;
+            $mail->Username = "kamphaengphet.pao@rspg-kpppao.com";
+            $mail->Password = "Merlin162990.";
+            $mail->setFrom('kamphaengphet.pao@rspg-kpppao.com', 'kamphaengphet.pao@rspg-kpppao.com');
+            $mail->addAddress('bee.110243@gmail.com', 'Recipient'); // Add a recipient
+
+            // Content
+            $mail->isHTML(true); // Set email format to HTML
+            $mail->Subject = 'ยืนยันการสมัครสมาชิกระบบจัดเก็บพันธุกรรมพืช : องค์การบริหารส่วนจังหวัดกำแพงเพชร';
             $mail->Body    = "Click on the link to verify your account: <a href='http://localhost/backend/verify.php?token=$token'>Verify Account</a>";
-    
+            $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+
             $mail->send();
+            echo 'Message has been sent';
         } catch (Exception $e) {
-            echo json_encode(['message' => 'Error sending email: ' . $mail->ErrorInfo]);
+            echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
         }
     }
 }
 
 // Usage
-$registerModel = new Register_model();
-$registerModel->register();
+// $registerModel = new Register_model();
+// $registerModel->register();
+
+
+
+//
+		
+// mail.iue.co.th
