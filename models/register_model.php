@@ -17,7 +17,6 @@ class Register_model extends Model
     {
         $json = json_decode(file_get_contents("php://input"));
         $email = $json->email;
-        $username = $json->username;
         $name = $json->name;
         $organization = $json->organization;
         $tell_number = $json->tell_number;
@@ -25,11 +24,25 @@ class Register_model extends Model
         $password = password_hash($json->password, PASSWORD_BCRYPT);
         $token = bin2hex(random_bytes(16));
 
-        $sql = "
+        // Check for duplicate email, username, or citizen_id
+        $checkSql = "SELECT COUNT(*) FROM tb_user WHERE email = :email OR citizen_id = :citizen_id";
+        $checkStmt = $this->db->prepare($checkSql);
+        $checkStmt->bindParam(':email', $email);
+        $checkStmt->bindParam(':citizen_id', $citizen_id);
+
+        try {
+            $checkStmt->execute();
+            $count = $checkStmt->fetchColumn();
+
+            if ($count > 0) {
+                echo json_encode("have", JSON_PRETTY_PRINT);
+                return;
+            }
+
+            $sql = "
         INSERT INTO tb_user
         (
             email,
-            username,
             password,
             name,
             organization,
@@ -41,7 +54,6 @@ class Register_model extends Model
             confirmed
         ) VALUES (
             :email,
-            :username,
             :password,
             :name,
             :organization,
@@ -53,160 +65,67 @@ class Register_model extends Model
             '0'
         )";
 
-        $stmt = $this->db->prepare($sql);
+            $stmt = $this->db->prepare($sql);
 
-        $stmt->bindParam(':email', $email);
-        $stmt->bindParam(':username', $username);
-        $stmt->bindParam(':password', $password);
-        $stmt->bindParam(':name', $name);
-        $stmt->bindParam(':organization', $organization);
-        $stmt->bindParam(':tell_number', $tell_number);
-        $stmt->bindParam(':citizen_id', $citizen_id);
-        $stmt->bindParam(':token', $token);
+            $stmt->bindParam(':email', $email);
+            $stmt->bindParam(':password', $password);
+            $stmt->bindParam(':name', $name);
+            $stmt->bindParam(':organization', $organization);
+            $stmt->bindParam(':tell_number', $tell_number);
+            $stmt->bindParam(':citizen_id', $citizen_id);
+            $stmt->bindParam(':token', $token);
 
-        try {
             $stmt->execute();
             $this->sendVerificationEmail($email, $token);
-            // echo json_encode(['message' => 'Verification email sent']);
         } catch (PDOException $e) {
             echo json_encode(['message' => 'Error registering user: ' . $e->getMessage()]);
         }
     }
-    public function generateEmailContent($name, $token)
+    public function generateEmailContent($token)
     {
         // <h1 class="text-center text-info">Hello, ' . htmlspecialchars($name) . '!</h1>
+        //   href="https://www.rspg-kppao.com/apirspg/register/' . $token . '"
         $html = '
-       <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>HTML + CSS</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <style>
-    @import url("https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap");
-    * {
-      font-family: "Sarabun" !important;
-    }
-    button {
-      position: relative;
-      font-size: 1.2em;
-      padding: 0.7em 1.4em;
-      background-color: #578160;
-      text-decoration: none;
-      border: none;
-      border-radius: 0.5em;
-      color: #ffffff;
-      box-shadow: 0.5em 0.5em 0.5em rgba(0, 0, 0, 0.3);
-    }
-
-    button::before {
-      position: absolute;
-      content: "";
-      height: 0;
-      width: 0;
-      top: 0;
-      left: 0;
-      background: linear-gradient(
-        135deg,
-        rgb(255, 255, 255) 0%,
-        rgb(255, 255, 255) 50%,
-        rgb(25, 88, 51) 50%,
-        rgb(22, 119, 74) 60%
-      );
-      border-radius: 0 0 0.5em 0;
-      box-shadow: 0.2em 0.2em 0.2em rgba(0, 0, 0, 0.3);
-      transition: 0.3s;
-    }
-
-    button:hover::before {
-      width: 1.6em;
-      height: 1.6em;
-    }
-
-    button:active {
-      box-shadow: 0.2em 0.2em 0.3em rgb(255, 255, 255);
-      transform: translate(0.1em, 0.1em);
-    }
-  </style>
-  <body
-    style="
-      background-color: #578160;
-      padding: 50px 50px 50px 50px;
-      max-width: 450px;
-    "
-  >
-    <div
-      style="
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding-top: 30px;
-        background-color: #ffffff;
-        padding-bottom: 30px;
-        box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
-          rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
-      "
-    >
-      <img src="https://www.rspg-kpppao.com/apirspg/public/images/logobtm.png"
-      width=120px" />
-      <h1
+  <body style="padding: 0px; margin: 0px; width: 70vw;">
+    <div style="margin: 0px auto; width: 500px">
+      <div
         style="
+          background-image: url(https://www.rspg-kpppao.com/apirspg/public/images/regist.png);
+          width: 500px;
+          height: 400px;
+        "
+      ></div>
+      <a
+        href="https://www.rspg-kpppao.com/apirspg/register/verify/' . $token . '"
+        style="
+          display: inline-block;
+          text-align: center;
           text-decoration: none;
-          line-height: 1;
-          padding: 0;
-          margin: 0;
-          color: #2a9d8f;
-          padding-top: 15px;
-          font-size: 18px;
+          width: 500px;
+          height: 50px;
+          line-height: 50px;
+          border: none;
+          font-size: 20px;
+          font-weight: 700;
+          color: white;
+          background-color: #208b3a;
+          cursor: pointer;
         "
       >
-        ยืนยันการสมัครสมาชิก
-      </h1>
-      <h2
-        style="
-          margin-top: 12px;
-          text-decoration: none;
-          line-height: 2;
-          padding: 0;
-          margin: 0;
-          font-size: 16px;
-          justify-content: center;
-          color: #5a189a;
-        "
-      >
-        รบบจัดเก็บพันธุกรรมพืช
-      </h2>
-      <h2
-        style="
-          text-decoration: none;
-          line-height: 1;
-          padding: 0;
-          margin: 0;
-          font-size: 16px;
-          justify-content: center;
-          color: #5a189a;
-        "
-      >
-        องค์การบริหารจังหวัดกำแพงเพชร
-      </h2>
-      <div style="margin-top: 20px">
-        <button style="cursor: pointer">
-          <b>คลิกเพื่อยืนยันการสมัคร</b>
-        </button>
-      </div>
+        คลิกเพื่อยืนยันการสมัคร
+      </a>
     </div>
   </body>
 </html>
+
 ';
         return $html;
     }
     private function sendVerificationEmail($email, $token)
     {
         try {
-            $body = $this->generateEmailContent("่รหา่ก้ดาห่ก", $token);
+            $body = $this->generateEmailContent($token);
             // date_default_timezone_set('Asia/Bangkok');
             // $alert_sentmail = null;
             $mail = new PHPMailer(true);
@@ -226,12 +145,10 @@ class Register_model extends Model
 
             // Content
             $mail->isHTML(true); // Set email format to HTML
-            $mail->Subject = 'ยืนยันการสมัครสมาชิกระบบจัดเก็บพันธุกรรมพืช : องค์การบริหารส่วนจังหวัดกำแพงเพชร';
+            $mail->Subject = 'องค์การบริหารส่วนจังหวัดกำแพงเพชร';
             $mail->Body = $body;
-            $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
-
             $mail->send();
-            echo json_encode('Send success', JSON_PRETTY_PRINT);
+            echo json_encode('success', JSON_PRETTY_PRINT);
         } catch (Exception $e) {
             echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
         }
@@ -256,11 +173,12 @@ class Register_model extends Model
                 $updateStmt = $this->db->prepare($updateSql);
                 $updateStmt->bindParam(':token', $token);
                 $updateStmt->execute();
-                header("Location: https://www.rspg-kpppao.com/login");
+                // header("Location: https://www.rspg-kpppao.com/login");
+                header("Location: https://www.rspg-kpppao.com/ver");
                 exit();
             } else {
                 // Token is invalid or expired
-                echo "Invalid or expired token.";
+                header("Location: https://www.rspg-kpppao.com/login");
             }
         } catch (PDOException $e) {
             echo "Error: " . $e->getMessage();
@@ -269,12 +187,111 @@ class Register_model extends Model
         //     echo "No token provided.";
         // }
     }
+
+    public function ChangePassword()
+    {
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $email = $_POST['email'];
+            // ตรวจสอบว่ามีอีเมลนี้ในฐานข้อมูลหรือไม่
+            $sql = "SELECT * FROM tb_user WHERE email = :email";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':email', $email);
+            $stmt->execute();
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($user) {
+                // สร้าง token ใหม่
+                $token = bin2hex(random_bytes(16));
+
+                // บันทึก token ลงฐานข้อมูล
+                $updateSql = "UPDATE tb_user SET token = :token WHERE email = :email";
+                $updateStmt = $this->db->prepare($updateSql);
+                $updateStmt->bindParam(':token', $token);
+                $updateStmt->bindParam(':email', $email);
+                $updateStmt->execute();
+
+                // ส่งอีเมลรีเซ็ตรหัสผ่าน
+                $mail = new PHPMailer(true);
+                try {
+                    $mail = new PHPMailer(true);
+                    $mail->isSMTP();
+                    $mail->SMTPDebug = 0;
+                    $mail->Debugoutput = 'html';
+                    $mail->CharSet = "utf-8";
+                    // $mail->Host = "mail.rspg-kpppao.com";
+                    $mail->Host = "s054ns1.hostinghispeed.com";
+                    $mail->SMTPSecure = 'tls'; // Enable TLS encryption, `ssl` also accepted
+                    $mail->Port = 587;
+                    $mail->SMTPAuth = true;
+                    $mail->Username = "kamphaengphet.pao@rspg-kpppao.com";
+                    $mail->Password = "Merlin162990.";
+                    $mail->setFrom('kamphaengphet.pao@rspg-kpppao.com', 'kamphaengphet.pao@rspg-kpppao.com');
+                    $mail->addAddress($email, 'Recipient'); // Add a recipient
+
+                    // Content
+                    $mail->isHTML(true); // Set email format to HTML
+                    $mail->Subject = 'องค์การบริหารส่วนจังหวัดกำแพงเพชร';
+                    //   href="https://www.rspg-kpppao.com/formchange/' . $token . '"
+                    $mail->Body = '
+                    <html lang="en">
+  <body style="padding: 0px; margin: 0px; width: 70vw;">
+    <div style="margin: 0px auto; width: 500px">
+      <a
+                          href="https://www.rspg-kpppao.com/formchange/' . $token . '"
+        style="
+          display: inline-block;
+          text-align: center;
+          text-decoration: none;
+          width: 500px;
+          height: 50px;
+          line-height: 50px;
+          border: none;
+          font-size: 20px;
+          font-weight: 700;
+          color: white;
+          background-color: #208b3a;
+          cursor: pointer;
+        "
+      >
+        คลิกเพื่อเปลี่ยนรหัสผ่าน
+      </a>
+    </div>
+  </body>
+</html>';
+
+                    $mail->send();
+                    echo json_encode("success", JSON_PRETTY_PRINT);
+                } catch (Exception $e) {
+                    echo "Error sending email: " . $mail->ErrorInfo;
+                }
+            } else {
+                echo "Email not found.";
+            }
+        }
+    }
+    public function savenewpass()
+    {
+        $token = $_POST['token'];
+        $newPassword = password_hash($_POST['password'], PASSWORD_BCRYPT);
+
+        // ตรวจสอบ token และอัพเดตรหัสผ่าน
+        $sql = "SELECT * FROM tb_user WHERE token = :token";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':token', $token);
+        $stmt->execute();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($user) {
+            // อัพเดตรหัสผ่านใหม่และลบ token
+            $updateSql = "UPDATE tb_user SET password = :password, token = NULL WHERE token = :token";
+            $updateStmt = $this->db->prepare($updateSql);
+            $updateStmt->bindParam(':password', $newPassword);
+            $updateStmt->bindParam(':token', $token);
+            $updateStmt->execute();
+            echo json_encode("success", JSON_PRETTY_PRINT);
+            exit();
+        } else {
+            echo "Invalid or expired token.";
+        }
+    }
 }
-
-// Usage
-// $registerModel = new Register_model();
-// $registerModel->register();
-
-//
-
-// mail.iue.co.th

@@ -11,21 +11,20 @@ class User_model extends Model
         $json = json_decode(file_get_contents("php://input"));
         $password = $json->password;
         $name = $json->name;
-        $username = $json->username;
         $organize = $json->organize;
         $tell = $json->tell;
         $citizen = $json->citizen;
         $email = $json->email;
         $hashed_password = password_hash($password, PASSWORD_BCRYPT);
         $sqlchkusername = $this->db->prepare("
-            SELECT COUNT(*) AS row FROM tb_user WHERE username = '$username' OR citizen_id = '$citizen' OR email = '$email' 
+            SELECT COUNT(*) AS row FROM tb_user WHERE  citizen_id = '$citizen' OR email = '$email'
              ");
         $sqlchkusername->execute(array());
         $datachk = $sqlchkusername->fetchAll(PDO::FETCH_ASSOC);
         $datachk = intval($datachk[0]['row']);
         if ($datachk === 0) {
             $sqlAdd = $this->db->prepare("
-            INSERT INTO tb_user(email,username,password,name,organization,user_role,tell_number,citizen_id,status) VALUES('$email','$username','$hashed_password','$name','$organize','2','$tell','$citizen','1')
+            INSERT INTO tb_user(email,password,name,organization,user_role,tell_number,citizen_id,status,confirmed) VALUES('$email','$hashed_password','$name','$organize','2','$tell','$citizen','1','1')
             ");
             if ($sqlAdd->execute()) {
                 echo json_encode("success", JSON_PRETTY_PRINT);
@@ -42,7 +41,7 @@ class User_model extends Model
         $username = $json->username;
         $password = $json->password;
         $sql = $this->db->prepare("
-            SELECT * FROM tb_user WHERE username = '$username' AND status = '1' AND confirmed ='1'
+            SELECT * FROM tb_user WHERE (username = '$username' OR email = '$username' ) AND status = '1' AND confirmed ='1'
             ");
         $sql->execute(array());
         $row = $sql->fetchAll(PDO::FETCH_ASSOC);
@@ -119,7 +118,6 @@ class User_model extends Model
     public function EditProfile()
     {
         $json = json_decode(file_get_contents("php://input"));
-        $username = $json->username;
         $email = $json->email;
         $name = $json->name;
         $organize = $json->organization;
@@ -128,35 +126,68 @@ class User_model extends Model
         $user_id = $json->user_id;
         $password = $json->password;
 
-
+        // Fetch the current user's information
         $sql = $this->db->prepare("
-        SELECT * FROM tb_user WHERE user_id = '$user_id' AND status = '1' AND confirmed ='1'
+        SELECT * FROM tb_user WHERE user_id = :user_id AND status = '1' AND confirmed = '1'
         ");
-        $sql->execute(array());
+        $sql->bindParam(':user_id', $user_id);
+        $sql->execute();
         $row = $sql->fetchAll(PDO::FETCH_ASSOC);
+
         if (COUNT($row) === 1) {
             $stored_password = $row[0]['password'];
-            // ทำการเปรียบเทียบรหัสผ่านที่ผู้ใช้ป้อนกับรหัสผ่านที่เก็บในฐานข้อมูล
+            // Verify the provided password
             if (password_verify($password, $stored_password)) {
-                $sql = $this->db->prepare("
-                UPDATE tb_user SET username = '$username',name = '$name',organization = '$organize',tell_number='$tell_number',citizen_id='$citizen',email='$email' WHERE user_id = '$user_id'
+                // Check for duplicate email, username, or citizen_id
+                $checkSql = $this->db->prepare("
+                SELECT COUNT(*) FROM tb_user
+                WHERE (email = :email  OR citizen_id = :citizen_id)
+                AND user_id != :user_id
                 ");
-                $sql->execute(array());
-                echo json_encode('success', JSON_PRETTY_PRINT);
+                $checkSql->bindParam(':email', $email);
+                $checkSql->bindParam(':citizen_id', $citizen);
+                $checkSql->bindParam(':user_id', $user_id);
+                $checkSql->execute();
+                $count = $checkSql->fetchColumn();
+
+                if ($count > 0) {
+                    echo json_encode(['message' => 'have']);
+                    return;
+                }
+
+                // Update the user's information
+                $updateSql = $this->db->prepare("
+                UPDATE tb_user
+                SET
+
+                    name = :name,
+                    organization = :organization,
+                    tell_number = :tell_number,
+                    citizen_id = :citizen_id,
+                    email = :email
+                WHERE user_id = :user_id
+                ");
+                $updateSql->bindParam(':name', $name);
+                $updateSql->bindParam(':organization', $organize);
+                $updateSql->bindParam(':tell_number', $tell_number);
+                $updateSql->bindParam(':citizen_id', $citizen);
+                $updateSql->bindParam(':email', $email);
+                $updateSql->bindParam(':user_id', $user_id);
+                $updateSql->execute();
+                echo json_encode(['message' => 'success'], JSON_PRETTY_PRINT);
             } else {
-                // รหัสผ่านไม่ถูกต้อง
-                echo json_encode("error", JSON_PRETTY_PRINT);
+                // Incorrect password
+                echo json_encode(['message' => 'error'], JSON_PRETTY_PRINT);
             }
         } else {
-            //ไม่พบผู้ใช้
-            echo json_encode("info", JSON_PRETTY_PRINT);
+            // User not found
+            echo json_encode(['message' => 'info'], JSON_PRETTY_PRINT);
         }
     }
 
     public function ChangePass()
     {
         $json = json_decode(file_get_contents("php://input"));
-        $newname = $json->username;
         $id = $json->id;
         $newpass = $json->newpass;
         $oldpass = $json->oldpass;
@@ -173,7 +204,7 @@ class User_model extends Model
             if (password_verify($oldpass, $stored_password)) {
                 $hashed_password = password_hash($newpass, PASSWORD_BCRYPT);
                 $sql = $this->db->prepare("
-                UPDATE tb_user SET username = '$newname', password = '$hashed_password' WHERE user_id = '$id' AND confirmed ='1'
+                UPDATE tb_user SET password = '$hashed_password' WHERE user_id = '$id' AND confirmed ='1'
                 ");
                 $sql->execute(array());
                 echo json_encode("success", JSON_PRETTY_PRINT);
