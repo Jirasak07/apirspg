@@ -85,7 +85,7 @@ class Register_model extends Model
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; // Use SSL/TLS on port 465
             $mail->Port       = 465;
     
-            $mail->setFrom('kamphaengphet.pao@rspg-kpppao.com', 'Your Name');
+            $mail->setFrom('kamphaengphet.pao@rspg-kpppao.com', 'JIRASAK');
             $mail->addAddress($email);
     
             $mail->isHTML(true);
