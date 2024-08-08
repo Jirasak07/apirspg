@@ -55,4 +55,8 @@ class User extends Controller
     {
         $this->model->ChangePass();
     }
+    public function Deluserrr()
+    {
+        $this->model->Deluserrr();
+    }
 }

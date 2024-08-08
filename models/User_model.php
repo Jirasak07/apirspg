@@ -217,4 +217,18 @@ class User_model extends Model
             echo json_encode("info", JSON_PRETTY_PRINT);
         }
     }
+    public function Deluserrr()
+    {
+        $json = json_decode(file_get_contents("php://input"));
+        $id = $json->user_id;
+        $sql = $this->db->prepare("
+           UPDATE tb_user SET confirmed = '9',status = '0'  WHERE user_id = '$id' 
+            ");
+        if ($sql->execute(array()) === true) {
+            echo json_encode("success", JSON_PRETTY_PRINT);
+        } else {
+            $error = $sql->errorInfo();
+            echo json_encode($error[2], JSON_PRETTY_PRINT);
+        }
+    }
 }
