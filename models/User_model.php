@@ -17,7 +17,7 @@ class User_model extends Model
         $email = $json->email;
         $hashed_password = password_hash($password, PASSWORD_BCRYPT);
         $sqlchkusername = $this->db->prepare("
-            SELECT COUNT(*) AS row FROM tb_user WHERE  citizen_id = '$citizen' OR email = '$email'
+            SELECT COUNT(*) AS row FROM tb_user WHERE  (citizen_id = '$citizen' OR email = '$email' ) AND confirmed = '1'
              ");
         $sqlchkusername->execute(array());
         $datachk = $sqlchkusername->fetchAll(PDO::FETCH_ASSOC);
