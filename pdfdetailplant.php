@@ -24,6 +24,17 @@ $mpdf = new \Mpdf\Mpdf([
     'default_font' => 'sarabun',
     'format' => [210, 297],
 ]);
+$mpdf->SetHTMLHeader('
+    <div style="text-align: right; font-size: 12pt;">
+        หน้าที่ {PAGENO}
+    </div>
+');
+
+$mpdf->SetHTMLFooter('
+    <div style="text-align: left; font-size: 10pt;">
+        พิมพ์เมื่อ ' . date('d/m/Y H:i:s') . '
+    </div>
+');
 $mpdf->AddPage();
 $mpdf->SetY(28);
 $mpdf->SetFont('sarabun', 'B', '16');
