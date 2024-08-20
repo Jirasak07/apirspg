@@ -24,7 +24,7 @@ class User_model extends Model
         $datachk = intval($datachk[0]['row']);
         if ($datachk === 0) {
             $sqlAdd = $this->db->prepare("
-            INSERT INTO tb_user(email,password,name,organization,user_role,tell_number,citizen_id,status,confirmed) VALUES('$email','$hashed_password','$name','$organize','2','$tell','$citizen','1','1')
+            INSERT INTO tb_user(email,password,name,organization,user_role,tell_number,citizen_id,status,confirmed,date) VALUES('$email','$hashed_password','$name','$organize','2','$tell','$citizen','1','1',CURRENT_TIMESTAMP)
             ");
             if ($sqlAdd->execute()) {
                 echo json_encode("success", JSON_PRETTY_PRINT);
