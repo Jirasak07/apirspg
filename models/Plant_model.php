@@ -116,6 +116,7 @@ class plant_model extends Model
 
                 date_add,
                 user_id,
+                user_add,
                 qty
                 )
                 values(
@@ -147,7 +148,9 @@ class plant_model extends Model
 
 
                 '$createdAt',
-                '$user_id','$qty')
+                '$user_id',
+                '$user_id',
+                '$qty')
             ");
 
         //  $data  = $sqladd->fetchAll(PDO::FETCH_ASSOC);
@@ -373,7 +376,7 @@ class plant_model extends Model
         SELECT *,(SELECT name_th FROM provinces WHERE code = A.province) AS province,
         (SELECT name_th FROM amphures WHERE code = A.amphure) AS amphure,
         (SELECT name_th FROM districts WHERE id = A.tumbol) AS tumbol
-        ,(SELECT C.image_name FROM tb_plant_img AS C WHERE C.plant_id = A.plant_id ORDER BY C.img_id DESC LIMIT 1) AS img,(SELECT name FROM tb_user WHERE user_id = A.user_id) AS useredit FROM `tb_plant` AS A WHERE plant_id = '$id';
+        ,(SELECT C.image_name FROM tb_plant_img AS C WHERE C.plant_id = A.plant_id ORDER BY C.img_id DESC LIMIT 1) AS img,(SELECT organization FROM tb_user WHERE user_id = A.user_add) AS og FROM `tb_plant` AS A WHERE plant_id = '$id';
         ");
         $sql->execute(array());
         $data = $sql->fetchAll(PDO::FETCH_ASSOC);

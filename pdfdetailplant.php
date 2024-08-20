@@ -287,7 +287,7 @@ $mpdf->SetFont('sarabun', 'B', '16');
 $mpdf->SetX(25);
 $mpdf->WriteCell(33, 0, 'ผู้ให้ข้อมูล ชื่อ-สกุล ', 0, 0,'L',0,'',0);
 $mpdf->SetFont('sarabun', '', '16');
-$mpdf->WriteCell(30, 0, 'ดอกไม้1', 0, 0,'L',0,'',0);
+$mpdf->WriteCell(30, 0, $data[0]["name_adder"], 0, 0,'L',0,'',0);
 $mpdf->SetFont('sarabun', 'B', '16');
 $mpdf->WriteCell(18, 0, 'สังกัด  ', 0, 0,'L',0,'',0);
 $mpdf->SetFont('sarabun', '', '16');
