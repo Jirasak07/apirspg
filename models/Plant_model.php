@@ -316,7 +316,7 @@ class plant_model extends Model
         $search = $json->search;
         if ($search !== "") {
             $cons = "
-            AND (plant_name LIKE '%$search%' OR plant_code LIKE '%$search%')";
+            AND (plant_name LIKE '%$search%' OR plant_code LIKE '%$search%') OR name_adder LIKE '%$search%'";
         } else {
             $cons = "";
         }
