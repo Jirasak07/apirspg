@@ -92,6 +92,11 @@ class plant_model extends Model
         $ss->execute(array());
         $plant_ids = $ss->fetchAll(PDO::FETCH_ASSOC);
         $plant_ids = $plant_ids[0]["plant_id"];
+        if($plant_ids === null || $plant_ids === "NULL" ){
+            $plant_ids = 1;
+        }else{
+            $plant_ids = intval($plant_ids) +1;
+        }
         $plant_id  = str_pad($plant_ids, 3, '0', STR_PAD_LEFT);
         $sqladd = $this->db->prepare("
             insert into tb_plant (
