@@ -58,7 +58,7 @@ class plant_model extends Model
     public function AddPlant()
     {
         $json = json_decode(file_get_contents("php://input"));
-        $plant_id = $json->plant_code;
+        // $plant_id = $json->plant_code;
         $plant_name = $json->plant_name;
         $area = $json->area;
         $locate_x = $json->locate_x;
@@ -86,6 +86,13 @@ class plant_model extends Model
         $user_id = $json->user_id;
         $currentTime = new DateTime();
         $createdAt = $currentTime->format('Y-m-d H:i:s');
+        $ss = $this->db->prepare("
+        SELECT MAX(plant_id) as plant_id from tb_plant
+        ");
+        $ss->execute(array());
+        $plant_ids = $ss->fetchAll(PDO::FETCH_ASSOC);
+        $plant_ids = $plant_ids[0]["plant_id"];
+        $plant_id  = str_pad($plant_ids, 3, '0', STR_PAD_LEFT);
         $sqladd = $this->db->prepare("
             insert into tb_plant (
                 plant_name,
@@ -154,21 +161,34 @@ class plant_model extends Model
             ");
 
         //  $data  = $sqladd->fetchAll(PDO::FETCH_ASSOC);
-        if ($sqladd->execute(array())) {
-            $ss = $this->db->prepare("
-            SELECT MAX(plant_id) as plant_id from tb_plant
-            ");
-            $ss->execute(array());
-            $plant_ids = $ss->fetchAll(PDO::FETCH_ASSOC);
-            $plant_ids = $plant_ids[0]["plant_id"];
-            $array = [
-                "status" => "success",
-                "plant_id" => $plant_ids,
-            ];
-            echo json_encode($array, JSON_PRETTY_PRINT);
-        } else {
-            $error = $sqladd->errorInfo();
-            echo json_encode($error[2], JSON_PRETTY_PRINT);
+        $sqlcheckcode = $this->db->prepare("
+        SELECT * from tb_plant WHERE plant_code = '$plant_id'
+        ");
+        // $formattedNumber = str_pad($number, 3, '0', STR_PAD_LEFT);
+
+        $sqlcheckcode->execute(array());
+        $data = $sqlcheckcode->fetchAll(PDO::FETCH_ASSOC);
+        if(count($data) === 0 ){
+
+            if ($sqladd->execute(array())) {
+                $ss = $this->db->prepare("
+                SELECT MAX(plant_id) as plant_id from tb_plant
+                ");
+                $ss->execute(array());
+                $plant_ids = $ss->fetchAll(PDO::FETCH_ASSOC);
+                $plant_ids = $plant_ids[0]["plant_id"];
+                $array = [
+                    "status" => "success",
+                    "plant_id" => $plant_ids,
+                ];
+                echo json_encode($array, JSON_PRETTY_PRINT);
+            } else {
+                $error = $sqladd->errorInfo();
+                echo json_encode($error[2], JSON_PRETTY_PRINT);
+            }
+        }else{
+            echo json_encode("errors", JSON_PRETTY_PRINT);
+
         }
     }
     public function uploadImage()
