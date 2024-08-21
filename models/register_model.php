@@ -38,7 +38,7 @@ class Register_model extends Model
                 echo json_encode("have", JSON_PRETTY_PRINT);
                 return;
             }
-
+            $timestamp = date("Y-m-d H:i:s");
             $sql = "
         INSERT INTO tb_user
         (
@@ -51,7 +51,8 @@ class Register_model extends Model
             status,
             citizen_id,
             token,
-            confirmed
+            confirmed,
+            date
         ) VALUES (
             :email,
             :password,
@@ -62,7 +63,8 @@ class Register_model extends Model
             '1',
             :citizen_id,
             :token,
-            '0'
+            '0',
+            $timestamp
         )";
 
             $stmt = $this->db->prepare($sql);

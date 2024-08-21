@@ -23,8 +23,9 @@ class User_model extends Model
         $datachk = $sqlchkusername->fetchAll(PDO::FETCH_ASSOC);
         $datachk = intval($datachk[0]['row']);
         if ($datachk === 0) {
+            $timestamp = date("Y-m-d H:i:s");
             $sqlAdd = $this->db->prepare("
-            INSERT INTO tb_user(email,password,name,organization,user_role,tell_number,citizen_id,status,confirmed,date) VALUES('$email','$hashed_password','$name','$organize','2','$tell','$citizen','1','1',CURRENT_TIMESTAMP)
+            INSERT INTO tb_user(email,password,name,organization,user_role,tell_number,citizen_id,status,confirmed,date) VALUES('$email','$hashed_password','$name','$organize','2','$tell','$citizen','1','1',$timestamp)
             ");
             if ($sqlAdd->execute()) {
                 echo json_encode("success", JSON_PRETTY_PRINT);
