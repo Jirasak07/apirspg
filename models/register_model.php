@@ -64,7 +64,7 @@ class Register_model extends Model
             :citizen_id,
             :token,
             '0',
-            $timestamp
+            GETDATE()
         )";
 
             $stmt = $this->db->prepare($sql);
