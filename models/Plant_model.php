@@ -92,10 +92,10 @@ class plant_model extends Model
         $ss->execute(array());
         $plant_ids = $ss->fetchAll(PDO::FETCH_ASSOC);
         $plant_ids = $plant_ids[0]["plant_id"];
-        if($plant_ids === null || $plant_ids === "NULL" ){
+        if ($plant_ids === null || $plant_ids === "NULL") {
             $plant_ids = 1;
-        }else{
-            $plant_ids = intval($plant_ids) +1;
+        } else {
+            $plant_ids = intval($plant_ids) + 1;
         }
         $plant_id  = str_pad($plant_ids, 3, '0', STR_PAD_LEFT);
         $sqladd = $this->db->prepare("
@@ -173,7 +173,7 @@ class plant_model extends Model
 
         $sqlcheckcode->execute(array());
         $data = $sqlcheckcode->fetchAll(PDO::FETCH_ASSOC);
-        if(count($data) === 0 ){
+        if (count($data) === 0) {
 
             if ($sqladd->execute(array())) {
                 $ss = $this->db->prepare("
@@ -191,9 +191,8 @@ class plant_model extends Model
                 $error = $sqladd->errorInfo();
                 echo json_encode($error[2], JSON_PRETTY_PRINT);
             }
-        }else{
+        } else {
             echo json_encode("errors", JSON_PRETTY_PRINT);
-
         }
     }
     public function uploadImage()
@@ -571,7 +570,6 @@ class plant_model extends Model
                     $error = $sqlinset->errorInfo();
                     echo json_encode($error[2], JSON_PRETTY_PRINT);
                 }
-
             } else {
                 echo json_encode(['status' => 'error', 'message' => 'Failed to move uploaded file.']);
             }
@@ -686,7 +684,8 @@ class plant_model extends Model
                 $use[$i] = [
                     "id" => $i,
                     "position" => [
-                        floatval($d["locate_x"]), floatval($d["locate_y"]),
+                        floatval($d["locate_x"]),
+                        floatval($d["locate_y"]),
                     ],
                     "popup" => $d["plant_name"],
                     "imageUrl" => $API . '/' . $dataimg,
@@ -695,7 +694,8 @@ class plant_model extends Model
                 $use[$i] = [
                     "id" => $i,
                     "position" => [
-                        floatval($d["locate_x"]), floatval($d["locate_y"]),
+                        floatval($d["locate_x"]),
+                        floatval($d["locate_y"]),
                     ],
                     "popup" => $d["plant_name"],
                     "imageUrl" => $API . '/public/images/logobtm.png',
@@ -838,7 +838,30 @@ class plant_model extends Model
             echo json_encode("error", JSON_PRETTY_PRINT);
         }
     }
-    function getdataexcel(){
+    function getdataexcel()
+    {
+        $json = json_decode(file_get_contents("php://input"));
+        $amphure = $json->amphure;
+        $tumbol = $json->tumbol;
+        $search = $json->search;
+        if ($search !== "") {
+            $cons = "
+            AND (plant_name LIKE '%$search%' OR plant_code LIKE '%$search%') OR name_adder LIKE '%$search%'";
+        } else {
+            $cons = "";
+        }
+        if ($tumbol !== "all") {
+            $cont = "
+            AND tumbol = '$tumbol'";
+        } else {
+            $cont = "";
+        }
+        if ($amphure !== "all") {
+            $cona = "
+            AND amphure = '$amphure'";
+        } else {
+            $cona = "";
+        }
         $sql = $this->db->prepare("
         SELECT 
 plant_code,
@@ -849,9 +872,9 @@ area,
 qty,
 locate_y,
 locate_x,
-districts.name_th,
-amphures.name_th,
-provinces.name_th,
+districts.name_th as 't',
+amphures.name_th as 'a',
+provinces.name_th as 'p',
 age,
 girth,
 height,
@@ -904,9 +927,11 @@ FROM tb_plant LEFT JOIN tb_user ON tb_plant.user_add = tb_user.user_id
 LEFT JOIN provinces ON tb_plant.province = provinces.code 
 LEFT JOIN districts ON tb_plant.tumbol = districts.id 
 LEFT JOIN amphures ON amphures.code = tb_plant.amphure
+WHERE plant_id IS NOT NULL  $cons $cona $cont
+ORDER BY plant_code
         ");
         $sql->execute(array());
         $data = $sql->fetchAll(PDO::FETCH_ASSOC);
-        echo json_encode($data,JSON_PRETTY_PRINT);
+        echo json_encode($data, JSON_PRETTY_PRINT);
     }
 }
