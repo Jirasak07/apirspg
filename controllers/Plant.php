@@ -122,4 +122,8 @@ class plant extends Controller
     {
         $this->model->SaveEditBanner();
     }
+    public function getdataexcel()
+    {
+        $this->model->getdataexcel();
+    }
 }

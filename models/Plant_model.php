@@ -838,4 +838,75 @@ class plant_model extends Model
             echo json_encode("error", JSON_PRETTY_PRINT);
         }
     }
+    function getdataexcel(){
+        $sql = $this->db->prepare("
+        SELECT 
+plant_code,
+plant_name,
+distinctive,
+plant_character,
+area,
+qty,
+locate_y,
+locate_x,
+districts.name_th,
+amphures.name_th,
+provinces.name_th,
+age,
+girth,
+height,
+tb_plant.status,
+benefit_food,
+benefit_medicine_human,
+benefit_medicine_animal,
+benefit_appliances,
+benefit_pesticide,
+about_tradition,
+about_religion,
+other,
+tb_user.name,
+
+tb_user.citizen_id,
+  CONCAT(
+    CASE DAYOFWEEK(date_add)
+      WHEN 1 THEN 'วันอาทิตย์'
+      WHEN 2 THEN 'วันจันทร์'
+      WHEN 3 THEN 'วันอังคาร'
+      WHEN 4 THEN 'วันพุธ'
+      WHEN 5 THEN 'วันพฤหัสบดี'
+      WHEN 6 THEN 'วันศุกร์'
+      WHEN 7 THEN 'วันเสาร์'
+    END,
+    'ที่ ',
+    DAY(date_add), ' ',
+    CASE MONTH(date_add)
+      WHEN 1 THEN 'มกราคม'
+      WHEN 2 THEN 'กุมภาพันธ์'
+      WHEN 3 THEN 'มีนาคม'
+      WHEN 4 THEN 'เมษายน'
+      WHEN 5 THEN 'พฤษภาคม'
+      WHEN 6 THEN 'มิถุนายน'
+      WHEN 7 THEN 'กรกฎาคม'
+      WHEN 8 THEN 'สิงหาคม'
+      WHEN 9 THEN 'กันยายน'
+      WHEN 10 THEN 'ตุลาคม'
+      WHEN 11 THEN 'พฤศจิกายน'
+      WHEN 12 THEN 'ธันวาคม'
+    END,
+    ' พ.ศ. ',
+    YEAR(date_add) + 543,
+    ' เวลา ',
+    DATE_FORMAT(date_add, '%H:%i'),
+    ' น.'
+  ) AS thai_datetime
+
+FROM tb_plant LEFT JOIN tb_user ON tb_plant.user_add = tb_user.user_id 
+LEFT JOIN provinces ON tb_plant.province = provinces.code 
+LEFT JOIN districts ON tb_plant.tumbol = districts.id 
+LEFT JOIN amphures ON amphures.code = tb_plant.amphure
+        ");
+        $sql->execute(array());
+        $data = $sql->fetchAll(PDO::FETCH_ASSOC);
+        echo json_encode($data,JSON_PRETTY_PRINT);
+    }
 }
